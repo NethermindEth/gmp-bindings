@@ -1,0 +1,218 @@
+name: Test / Publish
+
+on:
+  pull_request:  
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      publish:
+        default: false
+        description: Publish package
+        required: false 
+        type: boolean
+      feed:
+        description: NuGet feed
+        required: true
+        default: Production
+        type: choice
+        options:
+          - Production
+          - Staging
+
+env:
+  RETENTION: 7
+
+jobs:
+  build-linux:
+    name: Linux build
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    runs-on: ubuntu-latest
+    steps:
+      # - name: Check out GMP repository
+      #   run: hg clone https://gmplib.org/repo/gmp-6.3 gmp
+
+      - name: Check out gmp-6.3 repository
+        uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
+          path: gmp
+
+      - name: Install GNU C compiler for arm64
+        if: matrix.arch == 'arm64'
+        run: sudo apt-get update && sudo apt-get install -y gcc-12-aarch64-linux-gnu
+
+      - name: Build
+        working-directory: gmp
+        run: |
+          ./.bootstrap
+          ./configure \
+            --host=${{ matrix.arch == 'arm64' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
+            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
+          make -j$(nproc)
+          make check
+          strip .libs/libgmp.so
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}
+          path: gmp/.libs/libgmp.so
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
+
+  build-macos:
+    name: macOS build
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    runs-on: macos-13
+    steps:
+      - name: Check out gmp-6.3 repository
+        uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
+          path: gmp
+
+      - name: Install GNU Automake
+        run: brew install automake texinfo
+
+      - name: Build
+        working-directory: gmp
+        run: |
+          ./.bootstrap
+          ./configure \
+            --host=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
+            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
+          make -j$(sysctl -n hw.ncpu)
+          make check
+          strip -x .libs/libgmp.dylib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: osx-${{ matrix.arch }}
+          path: gmp/.libs/libgmp.dylib
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
+
+  build-windows:
+    name: Windows build
+    strategy:
+      matrix:
+        arch: [x64]
+    runs-on: windows-latest
+    steps:
+      - name: Disable line ending conversion
+        run: git config --global core.autocrlf input
+
+      - name: Check out gmp-6.3 repository
+        uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
+          path: gmp
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
+          install: >-
+            autoconf automake base-devel libtool
+            ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
+
+      - name: Build
+        if: matrix.arch == 'x64'
+        working-directory: gmp
+        shell: msys2 {0}
+        run: |
+          ./.bootstrap
+          ./configure \
+            --host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
+            --disable-static --enable-shared \
+            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
+          make -j$(nproc)
+          #make check
+          strip .libs/libgmp-10.dll
+          mv .libs/libgmp-10.dll .libs/gmp.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: win-${{ matrix.arch }}
+          path: gmp/.libs/gmp.dll
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
+
+  prebuilt-windows:
+    name: Windows pre-built
+    strategy:
+      matrix:
+        include:
+          - arch: arm64
+            url: https://mirror.msys2.org/mingw/clangarm64/mingw-w64-clang-aarch64-gmp-6.3.0-2-any.pkg.tar.zst
+          # - arch: x64
+          #   url: https://mirror.msys2.org/mingw/clang64/mingw-w64-clang-x86_64-gmp-6.3.0-2-any.pkg.tar.zst
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download ${{ matrix.arch }} package
+        run: |
+          curl -L ${{ matrix.url }} -o gmp.tar.zst
+          tar -xvf gmp.tar.zst
+          mv clangarm64/bin/libgmp-10.dll gmp.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: win-${{ matrix.arch }}
+          path: gmp.dll
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
+
+  test-publish:
+    name: Test / Publish
+    needs: [build-linux, build-macos, build-windows]
+    env:
+      BUILD_CONFIG: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out gmp-bindings repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: src/Nethermind.GmpBindings/runtimes
+
+      - name: Move artifacts
+        working-directory: src/Nethermind.GmpBindings/runtimes
+        run: |
+          mv -f linux-arm64/libgmp.so linux-arm64/native/libgmp.so
+          mv -f linux-x64/libgmp.so linux-x64/native/libgmp.so
+          mv -f osx-arm64/libgmp.dylib osx-arm64/native/libgmp.dylib
+          mv -f osx-x64/libgmp.dylib osx-x64/native/libgmp.dylib
+          mv -f win-x64/gmp.dll win-x64/native/gmp.dll
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+
+      - name: Install dependencies
+        working-directory: src
+        run: dotnet restore
+
+      - name: Test
+        working-directory: src/Nethermind.GmpBindings.Tests
+        run: dotnet run -c ${{ env.BUILD_CONFIG }} --no-restore
+
+      - name: Publish
+        if: ${{ inputs.publish || github.event_name == 'release' && !github.event.release.prerelease }}
+        working-directory: src
+        run: |
+          dotnet pack ./Nethermind.GmpBindings -c ${{ env.BUILD_CONFIG }} --no-build
+          dotnet nuget push ./artifacts/bin/Nethermind.GmpBindings/${{ env.BUILD_CONFIG }}/*.nupkg \
+            -k ${{ github.event.inputs.feed == 'Staging' && secrets.NUGETTEST_API_KEY || secrets.NUGET_API_KEY }} \
+            -s ${{ github.event.inputs.feed == 'Staging' && 'https://apiint.nugettest.org/v3/index.json' || 'https://api.nuget.org/v3/index.json' }} \

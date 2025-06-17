@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Nethermind.GmpBindings.Tests/Nethermind.GmpBindings.Tests.csproj" Id="92d78042-bfba-41b3-b2cc-01e00c0a9e46" />
+  <Project Path="Nethermind.GmpBindings/Nethermind.GmpBindings.csproj" />
+</Solution>
