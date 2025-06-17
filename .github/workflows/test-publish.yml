@@ -15,7 +15,6 @@ on:
         type: boolean
       feed:
         description: NuGet feed
-        required: true
         default: Production
         type: choice
         options:
@@ -213,6 +212,6 @@ jobs:
         working-directory: src
         run: |
           dotnet pack ./Nethermind.GmpBindings -c ${{ env.BUILD_CONFIG }} --no-build
-          dotnet nuget push ./artifacts/bin/Nethermind.GmpBindings/${{ env.BUILD_CONFIG }}/*.nupkg \
+          dotnet nuget push ./artifacts/package/${{ env.BUILD_CONFIG }}/*.nupkg \
             -k ${{ github.event.inputs.feed == 'Staging' && secrets.NUGETTEST_API_KEY || secrets.NUGET_API_KEY }} \
             -s ${{ github.event.inputs.feed == 'Staging' && 'https://apiint.nugettest.org/v3/index.json' || 'https://api.nuget.org/v3/index.json' }} \
