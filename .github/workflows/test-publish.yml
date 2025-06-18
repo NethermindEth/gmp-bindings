@@ -25,82 +25,82 @@ env:
   RETENTION: 7
 
 jobs:
-  # build-linux:
-  #   name: Linux build
-  #   strategy:
-  #     matrix:
-  #       arch: [arm64, x64]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     # - name: Check out GMP repository
-  #     #   run: hg clone https://gmplib.org/repo/gmp-6.3 gmp
-
-  #     - name: Check out gmp-6.3 repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: gmp-mirror/gmp-6.3
-  #         path: gmp
-
-  #     - name: Install GNU C compiler for arm64
-  #       if: matrix.arch == 'arm64'
-  #       run: sudo apt-get update && sudo apt-get install -y gcc-12-aarch64-linux-gnu
-
-  #     - name: Build
-  #       working-directory: gmp
-  #       run: |
-  #         ./.bootstrap
-  #         ./configure \
-  #           --host=${{ matrix.arch == 'arm64' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
-  #           ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
-  #         make -j$(nproc)
-  #         make check
-  #         strip .libs/libgmp.so
-
-  #     - name: Upload artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: linux-${{ matrix.arch }}
-  #         path: gmp/.libs/libgmp.so
-  #         retention-days: ${{ env.RETENTION }}
-  #         if-no-files-found: error
-
-  build-macos:
-    name: macOS build
+  build-linux:
+    name: Linux build
     strategy:
       matrix:
         arch: [arm64, x64]
-    runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-13' }}
-    continue-on-error: true
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
+      # - name: Check out GMP repository
+      #   run: hg clone https://gmplib.org/repo/gmp-6.3 gmp
+
       - name: Check out gmp-6.3 repository
         uses: actions/checkout@v4
         with:
           repository: gmp-mirror/gmp-6.3
           path: gmp
 
-      - name: Install build tools 
-        run: |
-          brew install automake texinfo \
-            ${{ matrix.arch == 'arm64' && 'autoconf libtool' || '' }}
+      - name: Install GNU C compiler for arm64
+        if: matrix.arch == 'arm64'
+        run: sudo apt-get update && sudo apt-get install -y gcc-12-aarch64-linux-gnu
 
       - name: Build
         working-directory: gmp
         run: |
           ./.bootstrap
-          ./configure --disable-static \
-            --host=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
-            ${{ matrix.arch == 'x64' && '--enable-fat' || '' }}
-          make -j$(sysctl -n hw.ncpu)
+          ./configure \
+            --host=${{ matrix.arch == 'arm64' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
+            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
+          make -j$(nproc)
           make check
-          strip -x .libs/libgmp.dylib
+          strip .libs/libgmp.so
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: osx-${{ matrix.arch }}
-          path: gmp/.libs/libgmp.dylib
+          name: linux-${{ matrix.arch }}
+          path: gmp/.libs/libgmp.so
           retention-days: ${{ env.RETENTION }}
           if-no-files-found: error
+
+  # build-macos:
+  #   name: macOS build
+  #   strategy:
+  #     matrix:
+  #       arch: [arm64, x64]
+  #   runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-13' }}
+  #   continue-on-error: true
+  #   steps:
+  #     - name: Check out gmp-6.3 repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         repository: gmp-mirror/gmp-6.3
+  #         path: gmp
+
+  #     - name: Install build tools 
+  #       run: |
+  #         brew install automake texinfo \
+  #           ${{ matrix.arch == 'arm64' && 'autoconf libtool' || '' }}
+
+  #     - name: Build
+  #       working-directory: gmp
+  #       run: |
+  #         ./.bootstrap
+  #         ./configure --disable-static \
+  #           --host=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
+  #           ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+  #         make -j$(sysctl -n hw.ncpu)
+  #         make check
+  #         strip -x .libs/libgmp.dylib
+
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: osx-${{ matrix.arch }}
+  #         path: gmp/.libs/libgmp.dylib
+  #         retention-days: ${{ env.RETENTION }}
+  #         if-no-files-found: error
 
   # build-windows:
   #   name: Windows build
