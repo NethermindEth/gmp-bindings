@@ -87,7 +87,7 @@ jobs:
           ./.bootstrap
           ./configure --disable-static \
             --host=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
-            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
+            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '--enable-fat' }}
           make -j$(sysctl -n hw.ncpu)
           make check
           strip -x .libs/libgmp.dylib
