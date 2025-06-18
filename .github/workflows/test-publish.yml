@@ -74,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-${{ matrix.arch }}
-          path: libgmp.so
+          path: ${{ github.workspace }}/libgmp.so
           retention-days: ${{ env.RETENTION }}
           if-no-files-found: error
 
