@@ -120,17 +120,20 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           update: true
-          msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
+          msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'ucrt64' }}
           install: >-
             autoconf automake base-devel libtool
-            ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
+            ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-ucrt-x86_64-toolchain' }}
 
       - name: Build
         working-directory: gmp
         shell: msys2 {0}
         run: |
+          CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
+          export CFLAGS
           ./.bootstrap
           ./configure \
+            --build=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
             --host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
             --disable-static --enable-shared \
             ${{ matrix.arch == 'arm64' && '--disable-assembly' || '--enable-fat' }}
@@ -154,15 +157,15 @@ jobs:
   #       include:
   #         - arch: arm64
   #           url: https://mirror.msys2.org/mingw/clangarm64/mingw-w64-clang-aarch64-gmp-6.3.0-2-any.pkg.tar.zst
-  #         # - arch: x64
-  #         #   url: https://mirror.msys2.org/mingw/clang64/mingw-w64-clang-x86_64-gmp-6.3.0-2-any.pkg.tar.zst
+  #         - arch: x64
+  #           url: https://mirror.msys2.org/mingw/clang64/mingw-w64-clang-x86_64-gmp-6.3.0-2-any.pkg.tar.zst
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Download ${{ matrix.arch }} package
   #       run: |
   #         curl -L ${{ matrix.url }} -o gmp.tar.zst
   #         tar -xvf gmp.tar.zst
-  #         mv clangarm64/bin/libgmp-10.dll gmp.dll
+  #         mv ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}/bin/libgmp-10.dll gmp.dll
 
   #     - name: Upload artifact
   #       uses: actions/upload-artifact@v4
