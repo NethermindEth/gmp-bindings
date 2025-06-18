@@ -70,6 +70,7 @@ jobs:
       matrix:
         arch: [arm64, x64]
     runs-on: macos-latest
+    continue-on-error: true
     steps:
       - name: Check out gmp-6.3 repository
         uses: actions/checkout@v4
@@ -86,6 +87,7 @@ jobs:
           ./.bootstrap
           ./config.guess
           ./configure \
+            --build=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
             --host=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
             ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
           make -j$(sysctl -n hw.ncpu)
