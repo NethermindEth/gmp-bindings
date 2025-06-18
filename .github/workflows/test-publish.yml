@@ -60,12 +60,12 @@ jobs:
           make -j$(nproc)
           make check
           strip .libs/libgmp.so
-          mv .libs/libgmp.so libgmp.so
+          mv ./.libs/libgmp.so ./libgmp.so
 
       - name: Cache artifacts
         uses: actions/cache/save@v4
         with:
-          path: libgmp.so
+          path: ./libgmp.so
           key: ${{ steps.cache-restore.outputs.cache-primary-key }}
 
       - name: Upload artifact
