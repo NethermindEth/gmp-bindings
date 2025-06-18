@@ -32,29 +32,12 @@ jobs:
         arch: [arm64, x64]
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
-      # - name: Check out GMP repository
-      #   run: hg clone https://gmplib.org/repo/gmp-6.3 gmp
-
-      - name: Restore cached artifacts
-        id: cache-restore
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            ${{ github.workspace }}/gmp/.libs/libgmp.so
-            ${{ github.workspace }}/libgmp.so
-            libgmp.so
-          key: linux-${{ matrix.arch }}
-
       - name: Check out gmp-6.3 repository
-        if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
         uses: actions/checkout@v4
         with:
           repository: gmp-mirror/gmp-6.3
-          path: gmp
 
       - name: Build
-        if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
-        working-directory: gmp
         run: |
           CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
           export CFLAGS
@@ -66,22 +49,11 @@ jobs:
           make check
           strip .libs/libgmp.so
 
-      - name: Cache artifacts
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ${{ github.workspace }}/gmp/.libs/libgmp.so
-            ${{ github.workspace }}/libgmp.so
-            libgmp.so
-          key: ${{ steps.cache-restore.outputs.cache-primary-key }}
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-${{ matrix.arch }}
-          path: |
-            ${{ github.workspace }}/gmp/.libs/libgmp.so
-            ${{ github.workspace }}/libgmp.so
+          path: .libs/libgmp.so
           retention-days: ${{ env.RETENTION }}
           if-no-files-found: error
 
