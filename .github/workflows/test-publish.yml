@@ -120,10 +120,10 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           update: true
-          msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'ucrt64' }}
+          msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
           install: >-
             autoconf automake base-devel libtool
-            ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-ucrt-x86_64-toolchain' }}
+            ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
 
       - name: Build
         working-directory: gmp
@@ -132,9 +132,8 @@ jobs:
           CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
           export CFLAGS
           ./.bootstrap
-          ./configure CC=x86_64-w64-mingw32-gcc \
-            --build=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
-            --host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
+          ./configure \
+            #--host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
             --disable-static --enable-shared \
             ${{ matrix.arch == 'arm64' && '--disable-assembly' || '--enable-fat' }}
           make -j$(nproc)
