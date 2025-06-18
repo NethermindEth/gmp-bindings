@@ -7,6 +7,7 @@
   <PropertyGroup>
     <Description>C# bindings for the GNU Multiple Precision Arithmetic (GMP) library.</Description>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
     <PackageId>Nethermind.GmpBindings</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

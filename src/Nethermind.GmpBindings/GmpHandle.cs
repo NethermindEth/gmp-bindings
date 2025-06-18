@@ -13,8 +13,10 @@ namespace Nethermind.GmpBindings;
 /// </param>
 public class GmpHandle(nint handle) : SafeHandle(handle, true)
 {
+    /// <inheritdoc/>
     public override bool IsInvalid => handle == nint.Zero;
 
+    /// <inheritdoc/>
     protected override bool ReleaseHandle()
     {
         if (IsInvalid)

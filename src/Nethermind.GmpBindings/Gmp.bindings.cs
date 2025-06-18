@@ -1,12 +1,15 @@
 // SPDX-FileCopyrightText: 2025 Demerzel Solutions Limited
 // SPDX-License-Identifier: MIT
 
-#pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable IDE1006 // Naming rules
 
 using System.Runtime.InteropServices;
 
 namespace Nethermind.GmpBindings;
 
+/// <summary>
+/// Represents the functions of the GMP library.
+/// </summary>
 public static unsafe partial class Gmp
 {
     #region Macros and Constants
