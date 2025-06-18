@@ -25,45 +25,40 @@ env:
   RETENTION: 7
 
 jobs:
-  build-linux:
-    name: Linux build
-    strategy:
-      matrix:
-        arch: [arm64, x64]
-    continue-on-error: true
-    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
-    steps:
-      # - name: Check out GMP repository
-      #   run: hg clone https://gmplib.org/repo/gmp-6.3 gmp
+  # build-linux:
+  #   name: Linux build
+  #   strategy:
+  #     matrix:
+  #       arch: [arm64, x64]
+  #   runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+  #   steps:
+  #     # - name: Check out GMP repository
+  #     #   run: hg clone https://gmplib.org/repo/gmp-6.3 gmp
 
-      - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v4
-        with:
-          repository: gmp-mirror/gmp-6.3
-          path: gmp
+  #     - name: Check out gmp-6.3 repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         repository: gmp-mirror/gmp-6.3
+  #         path: gmp
 
-      # - name: Install GNU C compiler for arm64
-      #   if: matrix.arch == 'arm64'
-      #   run: sudo apt-get update && sudo apt-get install -y gcc-12-aarch64-linux-gnu
+  #     - name: Build
+  #       working-directory: gmp
+  #       run: |
+  #         ./.bootstrap
+  #         ./configure --disable-static \
+  #           --host=${{ matrix.arch == 'arm64' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
+  #           ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+  #         make -j$(nproc)
+  #         make check
+  #         strip .libs/libgmp.so
 
-      - name: Build
-        working-directory: gmp
-        run: |
-          ./.bootstrap
-          ./configure --disable-static \
-            --host=${{ matrix.arch == 'arm64' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
-            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
-          make -j$(nproc)
-          make check
-          strip .libs/libgmp.so
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-${{ matrix.arch }}
-          path: gmp/.libs/libgmp.so
-          retention-days: ${{ env.RETENTION }}
-          if-no-files-found: error
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: linux-${{ matrix.arch }}
+  #         path: gmp/.libs/libgmp.so
+  #         retention-days: ${{ env.RETENTION }}
+  #         if-no-files-found: error
 
   # build-macos:
   #   name: macOS build
@@ -102,53 +97,54 @@ jobs:
   #         retention-days: ${{ env.RETENTION }}
   #         if-no-files-found: error
 
-  # build-windows:
-  #   name: Windows build
-  #   strategy:
-  #     matrix:
-  #       arch: [x64]
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: Disable line ending conversion
-  #       run: git config --global core.autocrlf input
+  build-windows:
+    name: Windows build
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
+    continue-on-error: true
+    steps:
+      - name: Disable line ending conversion
+        run: git config --global core.autocrlf input
 
-  #     - name: Check out gmp-6.3 repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: gmp-mirror/gmp-6.3
-  #         path: gmp
+      - name: Check out gmp-6.3 repository
+        uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
+          path: gmp
 
-  #     - name: Set up MSYS2
-  #       uses: msys2/setup-msys2@v2
-  #       with:
-  #         update: true
-  #         msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
-  #         install: >-
-  #           autoconf automake base-devel libtool
-  #           ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
+          install: >-
+            autoconf automake base-devel libtool
+            ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
 
-  #     - name: Build
-  #       if: matrix.arch == 'x64'
-  #       working-directory: gmp
-  #       shell: msys2 {0}
-  #       run: |
-  #         ./.bootstrap
-  #         ./configure \
-  #           --host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
-  #           --disable-static --enable-shared \
-  #           ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
-  #         make -j$(nproc)
-  #         #make check
-  #         strip .libs/libgmp-10.dll
-  #         mv .libs/libgmp-10.dll .libs/gmp.dll
+      - name: Build
+        if: matrix.arch == 'x64'
+        working-directory: gmp
+        shell: msys2 {0}
+        run: |
+          ./.bootstrap
+          ./configure \
+            --host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
+            --disable-static --enable-shared \
+            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+          make -j$(nproc)
+          #make check
+          strip .libs/libgmp-10.dll
+          mv .libs/libgmp-10.dll .libs/gmp.dll
 
-  #     - name: Upload artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: win-${{ matrix.arch }}
-  #         path: gmp/.libs/gmp.dll
-  #         retention-days: ${{ env.RETENTION }}
-  #         if-no-files-found: error
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: win-${{ matrix.arch }}
+          path: gmp/.libs/gmp.dll
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
 
   # prebuilt-windows:
   #   name: Windows pre-built
