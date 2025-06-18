@@ -13,7 +13,7 @@ on:
         default: None
         type: choice
         options:
-          - No
+          - 'No'
           - Staging
           - Production
 
@@ -35,7 +35,13 @@ jobs:
 
       - name: Build
         run: |
-          echo ${{ github.event_name }}
+          ./.bootstrap
+          ./configure \
+            --disable-static \
+            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+          make -j$(nproc)
+          make check
+          strip .libs/libgmp.so
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -161,7 +167,7 @@ jobs:
         run: dotnet run -c ${{ env.BUILD_CONFIG }} --no-restore
 
       - name: Publish
-        if: github.event.inputs.publish == 'Staging' || github.event.inputs.publish == 'Production' || github.event_name == 'release'
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish != 'No' || github.event_name == 'release'
         working-directory: src
         run: |
           dotnet pack ./Nethermind.GmpBindings -c ${{ env.BUILD_CONFIG }} --no-build
