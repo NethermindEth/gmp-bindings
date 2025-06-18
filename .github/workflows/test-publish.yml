@@ -28,10 +28,10 @@ jobs:
         arch: [arm64, x64]
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
-      - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v4
-        with:
-          repository: gmp-mirror/gmp-6.3
+      - name: Dowload GMP 6.3.0 source
+        run: |
+          curl -sS -O https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz
+          tar -xvf gmp-6.3.0.tar.xz --strip-components=1
 
       - name: Build
         run: |
