@@ -58,7 +58,7 @@ jobs:
           export CFLAGS
           ./.bootstrap
           ./configure \
-            --disable-static
+            --disable-static \
             ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
           make -j$(nproc)
           make check
