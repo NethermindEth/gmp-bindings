@@ -9,17 +9,13 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        default: false
-        description: Publish package
-        required: false 
-        type: boolean
-      feed:
-        description: NuGet feed
-        default: Staging
+        description: NuGet publishing
+        default: None
         type: choice
         options:
-          - Production
+          - None
           - Staging
+          - Production
 
 env:
   RETENTION: 7
@@ -39,7 +35,6 @@ jobs:
 
       - name: Build
         run: |
-          
           ./.bootstrap
           ./configure \
             --disable-static \
@@ -203,10 +198,10 @@ jobs:
   #       run: dotnet run -c ${{ env.BUILD_CONFIG }} --no-restore
 
   #     - name: Publish
-  #       if: ${{ inputs.publish || github.event_name == 'release' }}
+  #       if: ${{ github.event.inputs.publish != 'None' || github.event_name == 'release' }}
   #       working-directory: src
   #       run: |
   #         dotnet pack ./Nethermind.GmpBindings -c ${{ env.BUILD_CONFIG }} --no-build
   #         dotnet nuget push ./artifacts/package/${{ env.BUILD_CONFIG }}/*.nupkg \
-  #           -k ${{ github.event.inputs.feed == 'Staging' && secrets.NUGETTEST_API_KEY || secrets.NUGET_API_KEY }} \
-  #           -s ${{ github.event.inputs.feed == 'Staging' && 'https://apiint.nugettest.org/v3/index.json' || 'https://api.nuget.org/v3/index.json' }} \
+  #           -k ${{ github.event.inputs.publish == 'Staging' && secrets.NUGETTEST_API_KEY || secrets.NUGET_API_KEY }} \
+  #           -s ${{ github.event.inputs.publish == 'Staging' && 'https://apiint.nugettest.org/v3/index.json' || 'https://api.nuget.org/v3/index.json' }} \
