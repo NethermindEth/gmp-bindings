@@ -126,17 +126,16 @@ jobs:
             ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
 
       - name: Build
-        # if: matrix.arch == 'x64'
         working-directory: gmp
         shell: msys2 {0}
         run: |
           ./.bootstrap
           ./configure \
             --host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
-            --disable-static \
+            --disable-static --enable-shared \
             ${{ matrix.arch == 'arm64' && '--disable-assembly' || '--enable-fat' }}
           make -j$(nproc)
-          #make check
+          make check
           strip .libs/libgmp-10.dll
           mv .libs/libgmp-10.dll .libs/gmp.dll
 
