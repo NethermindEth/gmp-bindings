@@ -39,8 +39,7 @@ jobs:
 
       - name: Build
         run: |
-          CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
-          export CFLAGS
+          
           ./.bootstrap
           ./configure \
             --disable-static \
@@ -204,7 +203,7 @@ jobs:
   #       run: dotnet run -c ${{ env.BUILD_CONFIG }} --no-restore
 
   #     - name: Publish
-  #       if: ${{ inputs.publish || github.event_name == 'release' && !github.event.release.prerelease }}
+  #       if: ${{ inputs.publish || github.event_name == 'release' }}
   #       working-directory: src
   #       run: |
   #         dotnet pack ./Nethermind.GmpBindings -c ${{ env.BUILD_CONFIG }} --no-build
