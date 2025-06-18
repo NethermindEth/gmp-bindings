@@ -132,7 +132,7 @@ jobs:
           CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
           export CFLAGS
           ./.bootstrap
-          ./configure \
+          ./configure CC=x86_64-w64-mingw32-gcc \
             --build=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
             --host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
             --disable-static --enable-shared \
