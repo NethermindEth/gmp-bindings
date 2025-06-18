@@ -153,6 +153,7 @@ jobs:
           mv -f linux-x64/libgmp.so linux-x64/native/libgmp.so
           mv -f osx-arm64/libgmp.dylib osx-arm64/native/libgmp.dylib
           mv -f osx-x64/libgmp.dylib osx-x64/native/libgmp.dylib
+          mv -f win-arm64/gmp.dll win-arm64/native/gmp.dll
           mv -f win-x64/gmp.dll win-x64/native/gmp.dll
 
       - name: Set up .NET
