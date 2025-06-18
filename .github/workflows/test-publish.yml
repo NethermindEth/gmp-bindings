@@ -39,8 +39,7 @@ jobs:
         id: cache-restore
         uses: actions/cache/restore@v4
         with:
-          path: |
-            libgmp.so
+          path: ${{ github.workspace }}/gmp/.libs/libgmp.so
           key: linux-${{ matrix.arch }}
 
       - name: Check out gmp-6.3 repository
@@ -63,15 +62,12 @@ jobs:
           make -j$(nproc)
           make check
           strip .libs/libgmp.so
-          mv .libs/libgmp.so libgmp.so
 
       - name: Cache artifacts
-        id: cache-save
         uses: actions/cache/save@v4
         with:
-          path: |
-            libgmp.so
-          key: ${{ steps.cache-primes-restore.outputs.cache-primary-key }}
+          path: ${{ github.workspace }}/gmp/.libs/libgmp.so
+          key: ${{ steps.cache-restore.outputs.cache-primary-key }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
