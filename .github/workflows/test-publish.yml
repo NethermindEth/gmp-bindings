@@ -39,7 +39,7 @@ jobs:
         id: cache-restore
         uses: actions/cache/restore@v4
         with:
-          path: ${{ github.workspace }}/gmp/.libs/libgmp.so
+          path: libgmp.so
           key: linux-${{ matrix.arch }}
 
       - name: Check out gmp-6.3 repository
@@ -66,14 +66,16 @@ jobs:
       - name: Cache artifacts
         uses: actions/cache/save@v4
         with:
-          path: ${{ github.workspace }}/gmp/.libs/libgmp.so
+          path: libgmp.so
           key: ${{ steps.cache-restore.outputs.cache-primary-key }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-${{ matrix.arch }}
-          path: ${{ github.workspace }}/gmp/.libs/libgmp.so
+          path: |
+            ${{ github.workspace }}/gmp/.libs/libgmp.so
+            ${{ github.workspace }}/libgmp.so
           retention-days: ${{ env.RETENTION }}
           if-no-files-found: error
 
