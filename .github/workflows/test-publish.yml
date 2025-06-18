@@ -15,7 +15,7 @@ on:
         type: boolean
       feed:
         description: NuGet feed
-        default: Production
+        default: Staging
         type: choice
         options:
           - Production
@@ -25,41 +25,61 @@ env:
   RETENTION: 7
 
 jobs:
-  # build-linux:
-  #   name: Linux build
-  #   strategy:
-  #     matrix:
-  #       arch: [arm64, x64]
-  #   runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
-  #   steps:
-  #     # - name: Check out GMP repository
-  #     #   run: hg clone https://gmplib.org/repo/gmp-6.3 gmp
+  build-linux:
+    name: Linux build
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    steps:
+      # - name: Check out GMP repository
+      #   run: hg clone https://gmplib.org/repo/gmp-6.3 gmp
 
-  #     - name: Check out gmp-6.3 repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: gmp-mirror/gmp-6.3
-  #         path: gmp
+      - name: Restore cached artifacts
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            libgmp.so
+          key: linux-${{ matrix.arch }}
 
-  #     - name: Build
-  #       working-directory: gmp
-  #       run: |
-  #         ./.bootstrap
-  #         ./configure \
-  #           --host=${{ matrix.arch == 'arm64' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
-  #           --disable-static
-  #           ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
-  #         make -j$(nproc)
-  #         make check
-  #         strip .libs/libgmp.so
+      - name: Check out gmp-6.3 repository
+        if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
+        uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
+          path: gmp
 
-  #     - name: Upload artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: linux-${{ matrix.arch }}
-  #         path: gmp/.libs/libgmp.so
-  #         retention-days: ${{ env.RETENTION }}
-  #         if-no-files-found: error
+      - name: Build
+        if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
+        working-directory: gmp
+        run: |
+          CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
+          export CFLAGS
+          ./.bootstrap
+          ./configure \
+            --disable-static
+            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+          make -j$(nproc)
+          make check
+          strip .libs/libgmp.so
+          mv .libs/libgmp.so libgmp.so
+
+      - name: Cache artifacts
+        id: cache-save
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            libgmp.so
+          key: ${{ steps.cache-primes-restore.outputs.cache-primary-key }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}
+          path: gmp/.libs/libgmp.so
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
 
   # build-macos:
   #   name: macOS build
@@ -84,7 +104,6 @@ jobs:
   #       run: |
   #         ./.bootstrap
   #         ./configure \
-  #           --host=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
   #           --disable-static \
   #           ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
   #         make -j$(sysctl -n hw.ncpu)
@@ -99,54 +118,54 @@ jobs:
   #         retention-days: ${{ env.RETENTION }}
   #         if-no-files-found: error
 
-  build-windows:
-    name: Windows build
-    strategy:
-      matrix:
-        arch: [arm64, x64]
-    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
-    continue-on-error: true
-    steps:
-      - name: Disable line ending conversion
-        run: git config --global core.autocrlf input
+  # build-windows:
+  #   name: Windows build
+  #   strategy:
+  #     matrix:
+  #       arch: [arm64, x64]
+  #   runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
+  #   continue-on-error: true
+  #   steps:
+  #     - name: Disable line ending conversion
+  #       run: git config --global core.autocrlf input
 
-      - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v4
-        with:
-          repository: gmp-mirror/gmp-6.3
-          path: gmp
+  #     - name: Check out gmp-6.3 repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         repository: gmp-mirror/gmp-6.3
+  #         path: gmp
 
-      - name: Set up MSYS2
-        uses: msys2/setup-msys2@v2
-        with:
-          update: true
-          msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
-          install: >-
-            autoconf automake base-devel libtool
-            ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
+  #     - name: Set up MSYS2
+  #       uses: msys2/setup-msys2@v2
+  #       with:
+  #         update: true
+  #         msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
+  #         install: >-
+  #           autoconf automake base-devel libtool
+  #           ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
 
-      - name: Build
-        working-directory: gmp
-        shell: msys2 {0}
-        run: |
-          CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
-          export CFLAGS
-          ./.bootstrap
-          ./configure \
-            --disable-static --enable-shared \
-            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '--enable-fat' }}
-          make -j$(nproc)
-          make check
-          strip .libs/libgmp-10.dll
-          mv .libs/libgmp-10.dll .libs/gmp.dll
+  #     - name: Build
+  #       working-directory: gmp
+  #       shell: msys2 {0}
+  #       run: |
+  #         CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
+  #         export CFLAGS
+  #         ./.bootstrap
+  #         ./configure \
+  #           --disable-static --enable-shared \
+  #           ${{ matrix.arch == 'arm64' && '--disable-assembly' || '--enable-fat' }}
+  #         make -j$(nproc)
+  #         make check
+  #         strip .libs/libgmp-10.dll
+  #         mv .libs/libgmp-10.dll .libs/gmp.dll
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: win-${{ matrix.arch }}
-          path: gmp/.libs/gmp.dll
-          retention-days: ${{ env.RETENTION }}
-          if-no-files-found: error
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: win-${{ matrix.arch }}
+  #         path: gmp/.libs/gmp.dll
+  #         retention-days: ${{ env.RETENTION }}
+  #         if-no-files-found: error
 
   # prebuilt-windows:
   #   name: Windows pre-built
