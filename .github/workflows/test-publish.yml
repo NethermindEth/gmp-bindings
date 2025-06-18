@@ -47,9 +47,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: gmp-mirror/gmp-6.3
+          path: gmp
 
       - name: Build
         if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
+        working-directory: gmp
         run: |
           CFLAGS+=" -Wno-attributes -Wno-ignored-attributes"
           export CFLAGS
@@ -60,12 +62,12 @@ jobs:
           make -j$(nproc)
           make check
           strip .libs/libgmp.so
-          mv ./.libs/libgmp.so ./libgmp.so
+          mv .libs/libgmp.so libgmp.so
 
       - name: Cache artifacts
         uses: actions/cache/save@v4
         with:
-          path: ./libgmp.so
+          path: libgmp.so
           key: ${{ steps.cache-restore.outputs.cache-primary-key }}
 
       - name: Upload artifact
