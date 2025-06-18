@@ -79,7 +79,7 @@ jobs:
           path: gmp
 
       - name: Install GNU Automake
-        run: brew install automake texinfo
+        run: brew install autoconf automake libtool texinfo
 
       - name: Build
         working-directory: gmp
