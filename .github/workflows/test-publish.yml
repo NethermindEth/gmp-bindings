@@ -8,12 +8,12 @@ on:
     types: [published]
   workflow_dispatch:
     inputs:
-      nuget:
-        description: NuGet feed
+      publish:
+        description: Publish to NuGet
         default: None
         type: choice
         options:
-          - None
+          - No
           - Staging
           - Production
 
@@ -35,13 +35,7 @@ jobs:
 
       - name: Build
         run: |
-          ./.bootstrap
-          ./configure \
-            --disable-static \
-            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
-          make -j$(nproc)
-          make check
-          strip .libs/libgmp.so
+          echo ${{ github.event_name }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -167,10 +161,10 @@ jobs:
         run: dotnet run -c ${{ env.BUILD_CONFIG }} --no-restore
 
       - name: Publish
-        if: github.event.inputs.nuget == 'Staging' || github.event.inputs.nuget == 'Production' || github.event_name == 'release'
+        if: github.event.inputs.publish == 'Staging' || github.event.inputs.publish == 'Production' || github.event_name == 'release'
         working-directory: src
         run: |
           dotnet pack ./Nethermind.GmpBindings -c ${{ env.BUILD_CONFIG }} --no-build
           dotnet nuget push ./artifacts/package/${{ env.BUILD_CONFIG }}/*.nupkg \
-            -k ${{ github.event.inputs.nuget == 'Staging' && secrets.NUGETTEST_API_KEY || secrets.NUGET_API_KEY }} \
-            -s ${{ github.event.inputs.nuget == 'Staging' && 'https://apiint.nugettest.org/v3/index.json' || 'https://api.nuget.org/v3/index.json' }}
+            -k ${{ github.event.inputs.publish == 'Staging' && secrets.NUGETTEST_API_KEY || secrets.NUGET_API_KEY }} \
+            -s ${{ github.event.inputs.publish == 'Staging' && 'https://apiint.nugettest.org/v3/index.json' || 'https://api.nuget.org/v3/index.json' }}
