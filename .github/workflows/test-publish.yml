@@ -62,7 +62,7 @@ jobs:
           make -j$(nproc)
           make check
           strip .libs/libgmp.so
-          mv .libs/libgmp.so libgmp.so
+          mv .libs/libgmp.so ${{ github.workspace }}/libgmp.so
 
       - name: Cache artifacts
         uses: actions/cache/save@v4
