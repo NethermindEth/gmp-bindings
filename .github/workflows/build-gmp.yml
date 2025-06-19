@@ -8,6 +8,9 @@ on:
         default: false
         type: boolean
 
+permissions:
+  pull-requests: write
+
 env:
   RETENTION: 7
 
