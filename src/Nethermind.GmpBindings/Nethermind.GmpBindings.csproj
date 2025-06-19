@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>C# bindings for the GNU Multiple Precision Arithmetic (GMP) library.</Description>
+    <Description>C# bindings for the GNU Multiple Precision (GMP) arithmetic library.</Description>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
