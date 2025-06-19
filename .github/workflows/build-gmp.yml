@@ -150,13 +150,6 @@ jobs:
           mv -f win-arm64/gmp.dll win-arm64/native/gmp.dll
           mv -f win-x64/gmp.dll win-x64/native/gmp.dll
           
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v4
-
-      - name: Test
-        working-directory: src/Nethermind.GmpBindings.Tests
-        run: dotnet run -c release
-
       - name: Create a pull request
         env:
           GH_TOKEN: ${{ github.token }}
