@@ -1,1 +1,4 @@
 * text=auto eol=lf
+src/Nethermind.GmpBindings/runtimes/**/*.dll filter=lfs diff=lfs merge=lfs -text
+src/Nethermind.GmpBindings/runtimes/**/*.dylib filter=lfs diff=lfs merge=lfs -text
+src/Nethermind.GmpBindings/runtimes/**/*.so filter=lfs diff=lfs merge=lfs -text

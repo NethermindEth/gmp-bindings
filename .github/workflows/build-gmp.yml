@@ -1,0 +1,171 @@
+name: Build GMP
+
+on:
+  workflow_dispatch:
+    inputs:
+      create-pr:
+        description: Create a pull request
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  RETENTION: 7
+
+jobs:
+  build-linux:
+    name: Linux build
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    steps:
+      - name: Check out gmp-6.3 repository
+        uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
+
+      - name: Build
+        run: |
+          ./.bootstrap
+          ./configure \
+            --disable-static \
+            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+          make -j$(nproc)
+          make check
+          strip .libs/libgmp.so
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}
+          path: .libs/libgmp.so
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
+
+  build-macos:
+    name: macOS build
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-13' }}
+    steps:
+      - name: Check out gmp-6.3 repository
+        uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
+
+      - name: Install build tools 
+        run: |
+          brew install automake texinfo \
+            ${{ matrix.arch == 'arm64' && 'autoconf libtool' || '' }}
+
+      - name: Build
+        run: |
+          ./.bootstrap
+          ./configure \
+            --disable-static \
+            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+          make -j$(sysctl -n hw.ncpu)
+          make check
+          strip -x .libs/libgmp.dylib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: osx-${{ matrix.arch }}
+          path: .libs/libgmp.dylib
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
+
+  build-windows:
+    name: Windows build
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
+    steps:
+      - name: Disable line ending conversion
+        run: git config --global core.autocrlf input
+
+      - name: Check out gmp-6.3 repository
+        uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
+          install: >-
+            autoconf automake base-devel libtool
+            ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
+
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          ./.bootstrap
+          ./configure \
+            --disable-static \
+            --enable-shared \
+            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '--enable-fat' }}
+          make -j$(nproc)
+          make check
+          strip .libs/libgmp-10.dll
+          mv .libs/libgmp-10.dll .libs/gmp.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: win-${{ matrix.arch }}
+          path: .libs/gmp.dll
+          retention-days: ${{ env.RETENTION }}
+          if-no-files-found: error
+
+  create-pr:
+    name: Create a pull request
+    needs: [build-linux, build-macos, build-windows]
+    if: github.event.inputs.create-pr
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: src/Nethermind.GmpBindings/runtimes
+
+      - name: Move artifacts
+        working-directory: src/Nethermind.GmpBindings/runtimes
+        run: |
+          mv -f linux-arm64/libgmp.so linux-arm64/native/libgmp.so
+          mv -f linux-x64/libgmp.so linux-x64/native/libgmp.so
+          mv -f osx-arm64/libgmp.dylib osx-arm64/native/libgmp.dylib
+          mv -f osx-x64/libgmp.dylib osx-x64/native/libgmp.dylib
+          mv -f win-arm64/gmp.dll win-arm64/native/gmp.dll
+          mv -f win-x64/gmp.dll win-x64/native/gmp.dll
+          
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+
+      - name: Test
+        working-directory: src/Nethermind.GmpBindings.Tests
+        run: dotnet run -c release
+
+      - name: Create a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          head_branch=feature/gmp-build-${{ github.run_number }}-${{ github.run_attempt }}
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git checkout -b $head_branch
+          git add -A
+          git commit -am "Update GMP binaries"
+          git push origin $head_branch
+          gh pr create -B main -H $head_branch -t "Update GMP binaries" -b "Built and updated GMP binaries"
