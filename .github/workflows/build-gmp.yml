@@ -128,14 +128,14 @@ jobs:
     if: github.event.inputs.create-pr
     runs-on: ubuntu-latest
     steps:
-      - name: Create GitHub app token
-        id: gh-app
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          repositories: |
-            gmp-bindings
+      # - name: Create GitHub app token
+      #   id: gh-app
+      #   uses: actions/create-github-app-token@v2
+      #   with:
+      #     app-id: ${{ vars.APP_ID }}
+      #     private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      #     repositories: |
+      #       gmp-bindings
 
       - name: Check out repository
         uses: actions/checkout@v4
@@ -163,7 +163,7 @@ jobs:
 
       - name: Create a pull request
         env:
-          GH_TOKEN: ${{ steps.gh-app.outputs.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           head_branch=feature/gmp-build-${{ github.run_number }}-${{ github.run_attempt }}
           git config user.name "${{ github.actor }}"
