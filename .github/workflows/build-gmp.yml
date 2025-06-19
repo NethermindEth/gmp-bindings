@@ -9,6 +9,7 @@ on:
         type: boolean
 
 permissions:
+  contents: write
   pull-requests: write
 
 env:
