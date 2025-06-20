@@ -102,12 +102,13 @@ jobs:
           update: true
           msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
           install: >-
-            autoconf automake base-devel libtool
+            autoconf automake base-devel git libtool
             ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
 
       - name: Build
         shell: msys2 {0}
         run: |
+          export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
           ./.bootstrap
           ./configure \
             --disable-static \
@@ -129,7 +130,7 @@ jobs:
   create-pr:
     name: Create a pull request
     needs: [build-linux, build-macos, build-windows]
-    if: github.event.inputs.create-pr
+    if: github.event.inputs.create-pr == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
