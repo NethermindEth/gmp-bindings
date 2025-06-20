@@ -160,6 +160,42 @@ public static unsafe partial class Gmp
     public static partial int mpz_cmp(in mpz_t op1, in mpz_t op2);
 
     /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmp_005fd">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmp_d")]
+    public static partial int mpz_cmp_d(in mpz_t op1, double op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmp_005fsi">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmp_si")]
+    public static partial int mpz_cmp_si(in mpz_t op1, long op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmp_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmp_ui")]
+    public static partial int mpz_cmp_ui(in mpz_t op1, ulong op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmpabs">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmpabs")]
+    public static partial int mpz_cmpabs(in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmpabs_005fd">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmpabs_d")]
+    public static partial int mpz_cmpabs_d(in mpz_t op1, double op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmp_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmpabs_ui")]
+    public static partial int mpz_cmpabs_ui(in mpz_t op1, ulong op2);
+
+    /// <summary>
     /// <see href="https://gmplib.org/manual/Integer-Comparisons.html#index-mpz_005fsgn">See the GMP manual</see>
     /// </summary>
     public static int mpz_sgn(in mpz_t op) => op._mp_size < 0 ? -1 : op._mp_size > 0 ? 1 : 0;
@@ -180,18 +216,9 @@ public static unsafe partial class Gmp
 
     #region Custom Allocation
 
-    /// <summary>
-    /// <see href="https://gmplib.org/manual/Custom-Allocation.html#index-mp_005fget_005fmemory_005ffunctions">See the GMP manual</see>
-    /// </summary>
-    [LibraryImport(LibraryName, EntryPoint = "__gmp_get_memory_functions")]
-    public static partial void mp_get_memory_functions(
-        out delegate* unmanaged[Cdecl]<nuint, nint> alloc,
-        out delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
-        out delegate* unmanaged[Cdecl]<nint, nuint, void> free);
-
-    private static readonly delegate* unmanaged[Cdecl]<nuint, nint> _alloc;
-    private static readonly delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> _realloc;
-    private static readonly delegate* unmanaged[Cdecl]<nint, nuint, void> _free;
+    private static delegate* unmanaged[Cdecl]<nuint, nint> _alloc;
+    private static delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> _realloc;
+    private static delegate* unmanaged[Cdecl]<nint, nuint, void> _free;
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-allocate_005ffunction">See the GMP manual</see>
@@ -207,6 +234,33 @@ public static unsafe partial class Gmp
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-free_005ffunction">See the GMP manual</see>
     /// </summary>
     public static void free(nint ptr, nuint size) => _free(ptr, size);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Custom-Allocation#index-mp_005fset_005fmemory_005ffunctions">See the GMP manual</see>
+    /// </summary>
+    public static void mp_set_memory_functions(
+        delegate* unmanaged[Cdecl]<nuint, nint> alloc,
+        delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
+        delegate* unmanaged[Cdecl]<nint, nuint, void> free)
+    {
+        __gmp_set_memory_functions(alloc, realloc, free);
+        mp_get_memory_functions(out _alloc, out _realloc, out _free);
+    }
+
+    [LibraryImport(LibraryName)]
+    private static partial void __gmp_set_memory_functions(
+        delegate* unmanaged[Cdecl]<nuint, nint> alloc,
+        delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
+        delegate* unmanaged[Cdecl]<nint, nuint, void> free);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Custom-Allocation.html#index-mp_005fget_005fmemory_005ffunctions">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmp_get_memory_functions")]
+    public static partial void mp_get_memory_functions(
+        out delegate* unmanaged[Cdecl]<nuint, nint> alloc,
+        out delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
+        out delegate* unmanaged[Cdecl]<nint, nuint, void> free);
 
     #endregion
 }

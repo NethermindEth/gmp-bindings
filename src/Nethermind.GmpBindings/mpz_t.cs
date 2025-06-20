@@ -3,6 +3,7 @@
 
 #pragma warning disable IDE1006 // Naming rules
 
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -19,11 +20,67 @@ public readonly ref struct mpz_t
     internal readonly int _mp_size;
     internal readonly nint _mp_d;
 
+    #region Initialization
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="mpz_t"/> struct with the value of 0
+    /// Initializes a new instance of the <see cref="mpz_t"/> struct
     /// using the <see cref="Gmp.mpz_init"/> method.
     /// </summary>
-    public mpz_t() => Gmp.mpz_init(this);
+    public static mpz_t Create()
+    {
+        Unsafe.SkipInit(out mpz_t x);
+        Gmp.mpz_init(x);
+
+        return x;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="mpz_t"/> struct with the specified value
+    /// using the <see cref="Gmp.mpz_init_set"/> method.
+    /// </summary>
+    public static unsafe mpz_t Create(in mpz_t value)
+    {
+        Unsafe.SkipInit(out mpz_t x);
+        Gmp.mpz_init_set(x, value);
+
+        return x;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="mpz_t"/> struct with the specified value
+    /// using the <see cref="Gmp.mpz_init_set_ui"/> method.
+    /// </summary>
+    public static unsafe mpz_t Create(ulong value)
+    {
+        Unsafe.SkipInit(out mpz_t x);
+        Gmp.mpz_init_set_ui(x, value);
+
+        return x;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="mpz_t"/> struct with the specified value
+    /// using the <see cref="Gmp.mpz_init_set_si"/> method.
+    /// </summary>
+    public static unsafe mpz_t Create(long value)
+    {
+        Unsafe.SkipInit(out mpz_t x);
+        Gmp.mpz_init_set_si(x, value);
+
+        return x;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="mpz_t"/> struct with the specified value
+    /// using the <see cref="Gmp.mpz_init_set_d"/> method.
+    /// </summary>
+    public static unsafe mpz_t Create(double value)
+    {
+        Unsafe.SkipInit(out mpz_t x);
+        Gmp.mpz_init_set_d(x, value);
+
+        return x;
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="mpz_t"/> struct with the specified value and base
@@ -39,22 +96,39 @@ public readonly ref struct mpz_t
     /// For bases up to 36, case is ignored; upper-case and lower-case letters have the same value.
     /// For bases 37 to 62, upper-case letters represent the usual 10..35 while lower-case letters represent 36..61.
     /// </param>
-    /// <exception cref="ArgumentException">
-    /// <c>value</c> is <c>null</c> or an empty string, or <c>base</c> is invalid.
+    /// <exception cref="ArgumentNullException">
+    /// <c>value</c> is <c>null</c>.
     /// </exception>
-    public unsafe mpz_t(string value, int @base = 0)
+    /// <exception cref="ArgumentException">
+    /// <c>value</c> is an empty string, or <c>base</c> is invalid.
+    /// </exception>
+    public static unsafe mpz_t Create(string value, int @base = 0)
     {
         ArgumentException.ThrowIfNullOrEmpty(value);
 
-        fixed (byte* ptr = Encoding.UTF8.GetBytes(value))
+        fixed (byte* str = Encoding.UTF8.GetBytes(value))
         {
-            if (Gmp.mpz_init_set_str(this, (nint)ptr, @base) != 0)
+            Unsafe.SkipInit(out mpz_t x);
+
+            if (Gmp.mpz_init_set_str(x, (nint)str, @base) != 0)
+            {
+                Gmp.mpz_clear(x);
+
                 throw new ArgumentException($"{nameof(Gmp.mpz_init_set_str)} failed");
+            }
+
+            return x;
         }
     }
+
+    #endregion
+
+    #region Cleanup
 
     /// <summary>
     /// Frees the memory occupied by this instance using the <see cref="Gmp.mpz_clear"/> method.
     /// </summary>
     public readonly void Dispose() => Gmp.mpz_clear(this);
+
+    #endregion
 }
