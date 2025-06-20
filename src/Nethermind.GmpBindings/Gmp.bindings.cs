@@ -32,7 +32,7 @@ public static unsafe partial class Gmp
     public static partial void mpz_init(in mpz_t x);
 
     /// <summary>
-    /// <see href="https://gmplib.org/manual/Initializing-Integers.html#index-mpz_005fclear">See the GMP manual</see>
+    /// <see href="https://gmplib.org/manual/Initializing-Integers#index-mpz_005fclear">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_clear")]
     public static partial void mpz_clear(in mpz_t x);
@@ -138,13 +138,13 @@ public static unsafe partial class Gmp
     #region Import/Export Functions
 
     /// <summary>
-    /// <see href="https://gmplib.org/manual/Integer-Import-and-Export.html#index-mpz_005fimport">See the GMP manual</see>
+    /// <see href="https://gmplib.org/manual/Integer-Import-and-Export#index-mpz_005fimport">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_import")]
     public static partial void mpz_import(in mpz_t rop, nuint count, int order, nuint size, int endian, nuint nails, nint op);
 
     /// <summary>
-    /// <see href="https://gmplib.org/manual/Integer-Import-and-Export.html#index-mpz_005fexport">See the GMP manual</see>
+    /// <see href="https://gmplib.org/manual/Integer-Import-and-Export#index-mpz_005fexport">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_export")]
     public static partial nint mpz_export(nint rop, out nuint countp, int order, nuint size, int endian, nuint nails, in mpz_t op);
@@ -154,7 +154,7 @@ public static unsafe partial class Gmp
     #region Comparison Functions
 
     /// <summary>
-    /// <see href="https://gmplib.org/manual/Integer-Comparisons.html#index-mpz_005fcmp">See the GMP manual</see>
+    /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmp">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmp")]
     public static partial int mpz_cmp(in mpz_t op1, in mpz_t op2);
@@ -196,7 +196,7 @@ public static unsafe partial class Gmp
     public static partial int mpz_cmpabs_ui(in mpz_t op1, ulong op2);
 
     /// <summary>
-    /// <see href="https://gmplib.org/manual/Integer-Comparisons.html#index-mpz_005fsgn">See the GMP manual</see>
+    /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fsgn">See the GMP manual</see>
     /// </summary>
     public static int mpz_sgn(in mpz_t op) => op._mp_size < 0 ? -1 : op._mp_size > 0 ? 1 : 0;
 
@@ -205,7 +205,7 @@ public static unsafe partial class Gmp
     #region Miscellaneous Functions
 
     /// <summary>
-    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions.html#index-mpz_005fsizeinbase">See the GMP manual</see>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005fsizeinbase">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_sizeinbase")]
     public static partial nuint mpz_sizeinbase(in mpz_t op, int @base);
@@ -254,7 +254,7 @@ public static unsafe partial class Gmp
         delegate* unmanaged[Cdecl]<nint, nuint, void> free);
 
     /// <summary>
-    /// <see href="https://gmplib.org/manual/Custom-Allocation.html#index-mp_005fget_005fmemory_005ffunctions">See the GMP manual</see>
+    /// <see href="https://gmplib.org/manual/Custom-Allocation#index-mp_005fget_005fmemory_005ffunctions">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmp_get_memory_functions")]
     public static partial void mp_get_memory_functions(
