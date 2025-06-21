@@ -70,24 +70,20 @@ public class BasicTests
     }
 
     [Fact]
-    public void Should_fail_on_init_if_null_or_empty_value()
+    public void Should_fail_on_init_if_null_value()
     {
         Assert.Throws<ArgumentNullException>(static () =>
         {
             using var _ = mpz_t.Create(null!);
         });
-
-        Assert.Throws<ArgumentException>(static () =>
-        {
-            using var _ = mpz_t.Create(string.Empty);
-        });
     }
 
     [Theory]
+    [InlineData("", 0)]
     [InlineData("1234567890", 1)]
     [InlineData("1234567890", 63)]
     [InlineData("1234567890x", 16)]
-    public void Should_fail_on_init_if_invalid_base(string value, int @base)
+    public void Should_fail_on_init_if_invalid_value(string value, int @base)
     {
         Assert.Throws<ArgumentException>("value", () =>
         {

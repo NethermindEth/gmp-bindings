@@ -6,6 +6,10 @@ using System.Runtime.InteropServices;
 
 namespace Nethermind.GmpBindings.Tests;
 
+[CollectionDefinition(nameof(AllocationTests), DisableParallelization = true)]
+public class AllocationCollection { }
+
+[Collection(nameof(AllocationTests))]
 public class AllocationTests : IDisposable
 {
     private static int _counter;
