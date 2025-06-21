@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Nethermind.GmpBindings.Tests;
 
-public unsafe class AllocationTests : IDisposable
+public class AllocationTests : IDisposable
 {
     private static int _counter;
 
