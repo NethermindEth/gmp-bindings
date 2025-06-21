@@ -116,6 +116,30 @@ public static unsafe partial class Gmp
     #region Conversion Functions
 
     /// <summary>
+    /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_ui")]
+    public static partial ulong mpz_get_ui(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fsi">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_si")]
+    public static partial long mpz_get_si(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fd">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_d")]
+    public static partial double mpz_get_d(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fd_005f2exp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_d_2exp")]
+    public static partial double mpz_get_d_2exp(out long exp, in mpz_t op);
+
+    /// <summary>
     /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fstr">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_str")]
