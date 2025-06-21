@@ -50,7 +50,7 @@ public readonly ref struct mpz_t
     /// Initializes a new instance of the <see cref="mpz_t"/> struct with the specified value
     /// using the <see cref="Gmp.mpz_init_set_ui"/> method.
     /// </summary>
-    public static mpz_t Create(ulong value)
+    public static mpz_t Create(nuint value)
     {
         Unsafe.SkipInit(out mpz_t x);
         Gmp.mpz_init_set_ui(x, value);
@@ -62,7 +62,7 @@ public readonly ref struct mpz_t
     /// Initializes a new instance of the <see cref="mpz_t"/> struct with the specified value
     /// using the <see cref="Gmp.mpz_init_set_si"/> method.
     /// </summary>
-    public static mpz_t Create(long value)
+    public static mpz_t Create(nint value)
     {
         Unsafe.SkipInit(out mpz_t x);
         Gmp.mpz_init_set_si(x, value);

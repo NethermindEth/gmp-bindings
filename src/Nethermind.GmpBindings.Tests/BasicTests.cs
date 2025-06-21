@@ -29,19 +29,21 @@ public class BasicTests
     }
 
     [Fact]
-    public void Should_initialize_from_ulong()
+    public void Should_initialize_from_nuint()
     {
-        using var x = mpz_t.Create(ulong.MaxValue);
+        var value = 1024U;
+        using var x = mpz_t.Create(value);
 
-        Assert.Equal(0, Gmp.mpz_cmp_ui(x, ulong.MaxValue));
+        Assert.Equal(0, Gmp.mpz_cmp_ui(x, value));
     }
 
     [Fact]
-    public void Should_initialize_from_long()
+    public void Should_initialize_from_nint()
     {
-        using var x = mpz_t.Create(long.MaxValue);
+        var value = 1024;
+        using var x = mpz_t.Create(value);
 
-        Assert.Equal(0, Gmp.mpz_cmp_si(x, long.MaxValue));
+        Assert.Equal(0, Gmp.mpz_cmp_si(x, value));
     }
 
     [Fact]

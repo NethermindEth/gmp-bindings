@@ -19,9 +19,9 @@ public class IntAssignmentTests
     }
 
     [Fact]
-    public void Should_set_from_ulong()
+    public void Should_set_from_nuint()
     {
-        var value = 1024UL;
+        var value = 1024U;
         using mpz_t x = default;
 
         Gmp.mpz_set_ui(x, value);
@@ -30,9 +30,9 @@ public class IntAssignmentTests
     }
 
     [Fact]
-    public void Should_set_from_long()
+    public void Should_set_from_nint()
     {
-        var value = 1024L;
+        var value = 1024;
         using mpz_t x = default;
 
         Gmp.mpz_set_si(x, value);
@@ -63,7 +63,7 @@ public class IntAssignmentTests
             Assert.Equal(0, status);
         }
 
-        Assert.Equal(0, Gmp.mpz_cmp_si(x, Convert.ToInt64(value, 16)));
+        Assert.Equal(0, Gmp.mpz_cmp_si(x, Convert.ToInt32(value, 16)));
     }
 
     [Fact]

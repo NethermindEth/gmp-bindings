@@ -32,10 +32,22 @@ public static unsafe partial class Gmp
     public static partial void mpz_init(in mpz_t x);
 
     /// <summary>
+    /// <see href="https://gmplib.org/manual/Initializing-Integers#index-mpz_005finit2">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_init2")]
+    public static partial void mpz_init2(in mpz_t x, nuint n);
+
+    /// <summary>
     /// <see href="https://gmplib.org/manual/Initializing-Integers#index-mpz_005fclear">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_clear")]
     public static partial void mpz_clear(in mpz_t x);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Initializing-Integers#index-mpz_005fclear">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_realloc2")]
+    public static partial void mpz_realloc2(in mpz_t x, nuint n);
 
     #endregion
 
@@ -51,13 +63,13 @@ public static unsafe partial class Gmp
     /// <see href="https://gmplib.org/manual/Assigning-Integers#index-mpz_005fset_005fui">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_set_ui")]
-    public static partial void mpz_set_ui(in mpz_t rop, ulong op);
+    public static partial void mpz_set_ui(in mpz_t rop, nuint op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Assigning-Integers#index-mpz_005fset_005fsi">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_set_si")]
-    public static partial void mpz_set_si(in mpz_t rop, long op);
+    public static partial void mpz_set_si(in mpz_t rop, nint op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Assigning-Integers#index-mpz_005fset_005fd">See the GMP manual</see>
@@ -91,13 +103,13 @@ public static unsafe partial class Gmp
     /// <see href="https://gmplib.org/manual/Simultaneous-Integer-Init-_0026-Assign#index-mpz_005finit_005fset_005fui">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_init_set_ui")]
-    public static partial void mpz_init_set_ui(in mpz_t rop, ulong op);
+    public static partial void mpz_init_set_ui(in mpz_t rop, nuint op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Simultaneous-Integer-Init-_0026-Assign#index-mpz_005finit_005fset_005fsi">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_init_set_si")]
-    public static partial void mpz_init_set_si(in mpz_t rop, long op);
+    public static partial void mpz_init_set_si(in mpz_t rop, nint op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Simultaneous-Integer-Init-_0026-Assign#index-mpz_005finit_005fset_005fd">See the GMP manual</see>
@@ -119,13 +131,13 @@ public static unsafe partial class Gmp
     /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fui">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_ui")]
-    public static partial ulong mpz_get_ui(in mpz_t op);
+    public static partial nuint mpz_get_ui(in mpz_t op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fsi">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_si")]
-    public static partial long mpz_get_si(in mpz_t op);
+    public static partial nint mpz_get_si(in mpz_t op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fd">See the GMP manual</see>
@@ -137,7 +149,7 @@ public static unsafe partial class Gmp
     /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fd_005f2exp">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_d_2exp")]
-    public static partial double mpz_get_d_2exp(out long exp, in mpz_t op);
+    public static partial double mpz_get_d_2exp(out nint exp, in mpz_t op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fstr">See the GMP manual</see>
@@ -223,13 +235,13 @@ public static unsafe partial class Gmp
     /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmp_005fsi">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmp_si")]
-    public static partial int mpz_cmp_si(in mpz_t op1, long op2);
+    public static partial int mpz_cmp_si(in mpz_t op1, nint op2);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmp_005fui">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmp_ui")]
-    public static partial int mpz_cmp_ui(in mpz_t op1, ulong op2);
+    public static partial int mpz_cmp_ui(in mpz_t op1, nuint op2);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmpabs">See the GMP manual</see>
@@ -247,7 +259,7 @@ public static unsafe partial class Gmp
     /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fcmp_005fui">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_cmpabs_ui")]
-    public static partial int mpz_cmpabs_ui(in mpz_t op1, ulong op2);
+    public static partial int mpz_cmpabs_ui(in mpz_t op1, nuint op2);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Integer-Comparisons#index-mpz_005fsgn">See the GMP manual</see>
