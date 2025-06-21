@@ -89,7 +89,7 @@ public class BasicTests
     [InlineData("1234567890x", 16)]
     public void Should_fail_on_init_if_invalid_base(string value, int @base)
     {
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>("value", () =>
         {
             using var _ = mpz_t.Create(value, @base);
         });

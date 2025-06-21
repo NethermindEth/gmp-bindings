@@ -100,7 +100,7 @@ public readonly ref struct mpz_t
     /// <c>value</c> is <c>null</c>.
     /// </exception>
     /// <exception cref="ArgumentException">
-    /// <c>value</c> is an empty string, or <c>base</c> is invalid.
+    /// <c>value</c> is an empty string or an incorrect base <c>base</c>.
     /// </exception>
     public static unsafe mpz_t Create(string value, int @base = 0)
     {
@@ -110,14 +110,12 @@ public readonly ref struct mpz_t
         {
             Unsafe.SkipInit(out mpz_t x);
 
-            if (Gmp.mpz_init_set_str(x, (nint)str, @base) != 0)
-            {
-                Gmp.mpz_clear(x);
+            if (Gmp.mpz_init_set_str(x, (nint)str, @base) == 0)
+                return x;
 
-                throw new ArgumentException($"{nameof(Gmp.mpz_init_set_str)} failed");
-            }
+            Gmp.mpz_clear(x);
 
-            return x;
+            throw new ArgumentException("Value is an incorrect base.", nameof(value));
         }
     }
 
