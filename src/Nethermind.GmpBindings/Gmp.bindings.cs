@@ -216,19 +216,19 @@ public static unsafe partial class Gmp
 
     #region Custom Allocation
 
-    private static delegate* unmanaged[Cdecl]<nuint, nint> _alloc;
-    private static delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> _realloc;
+    private static delegate* unmanaged[Cdecl]<nuint, nint> _allocate;
+    private static delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> _reallocate;
     private static delegate* unmanaged[Cdecl]<nint, nuint, void> _free;
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-allocate_005ffunction">See the GMP manual</see>
     /// </summary>
-    public static nint alloc(nuint alloc_size) => _alloc(alloc_size);
+    public static nint allocate(nuint alloc_size) => _allocate(alloc_size);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-reallocate_005ffunction">See the GMP manual</see>
     /// </summary>
-    public static nint realloc(nint ptr, nuint old_size, nuint new_size) => _realloc(ptr, old_size, new_size);
+    public static nint reallocate(nint ptr, nuint old_size, nuint new_size) => _reallocate(ptr, old_size, new_size);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-free_005ffunction">See the GMP manual</see>
@@ -244,7 +244,7 @@ public static unsafe partial class Gmp
         delegate* unmanaged[Cdecl]<nint, nuint, void> free)
     {
         __gmp_set_memory_functions(alloc, realloc, free);
-        mp_get_memory_functions(out _alloc, out _realloc, out _free);
+        mp_get_memory_functions(out _allocate, out _reallocate, out _free);
     }
 
     [LibraryImport(LibraryName)]

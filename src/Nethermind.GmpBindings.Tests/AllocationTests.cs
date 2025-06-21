@@ -15,10 +15,10 @@ public unsafe class AllocationTests : IDisposable
     {
         Gmp.mp_set_memory_functions(&TestAlloc, &TestReAlloc, &TestFree);
 
-        nint ptr = Gmp.alloc(128);
+        nint ptr = Gmp.allocate(128);
         Assert.Equal(1, _counter);
 
-        ptr = Gmp.realloc(ptr, 128, 256);
+        ptr = Gmp.reallocate(ptr, 128, 256);
         Assert.Equal(2, _counter);
 
         Gmp.free(ptr, 256);
@@ -40,10 +40,10 @@ public unsafe class AllocationTests : IDisposable
         Assert.True(realloc is not null);
         Assert.True(free is not null);
 
-        nint ptr = Gmp.alloc(128);
+        nint ptr = Gmp.allocate(128);
         Assert.NotEqual(nint.Zero, ptr);
 
-        ptr = Gmp.realloc(ptr, 128, 256);
+        ptr = Gmp.reallocate(ptr, 128, 256);
         Assert.NotEqual(nint.Zero, ptr);
 
         Gmp.free(ptr, 256);

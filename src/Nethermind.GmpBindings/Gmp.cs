@@ -23,7 +23,7 @@ public static unsafe partial class Gmp
 
         NativeLibrary.Free(handle);
 
-        mp_get_memory_functions(out _alloc, out _realloc, out _free);
+        mp_get_memory_functions(out _allocate, out _reallocate, out _free);
     }
 
     private static nint OnResolvingUnmanagedDll(Assembly context, string name)
