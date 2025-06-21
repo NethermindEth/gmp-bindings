@@ -8,4 +8,4 @@ C# bindings for the [GNU Multiple Precision](https://gmplib.org) (GMP) arithmeti
 #### Note
 
 - Not all GMP functions are currently bound — only the ones used by Nethermind. If you need a specific function, please open an issue.
-- To build the GMP, an unofficial GMP repository mirror is used, as the original repository is inaccessible from GitHub.
+- To build the GMP, an unofficial GMP repository mirror is used, as the official repository is inaccessible from GitHub.
