@@ -168,10 +168,82 @@ public static unsafe partial class Gmp
     public static partial void mpz_add(in mpz_t rop, in mpz_t op1, in mpz_t op2);
 
     /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fadd_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_add_ui")]
+    public static partial void mpz_add_ui(in mpz_t rop, in mpz_t op1, nuint op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fsub">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_sub")]
+    public static partial void mpz_sub(in mpz_t rop, in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fsub_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_sub")]
+    public static partial void mpz_sub_ui(in mpz_t rop, in mpz_t op1, nuint op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fui_005fsub">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_sub")]
+    public static partial void mpz_ui_sub(in mpz_t rop, nuint op1, in mpz_t op2);
+
+    /// <summary>
     /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fmul">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_mul")]
     public static partial void mpz_mul(in mpz_t rop, in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fmul_005fsi">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_mul_si")]
+    public static partial void mpz_mul_si(in mpz_t rop, in mpz_t op1, nint op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fmul_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_mul_ui")]
+    public static partial void mpz_mul_ui(in mpz_t rop, in mpz_t op1, nuint op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005faddmul">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_addmul")]
+    public static partial void mpz_addmul(in mpz_t rop, in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005faddmul_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_addmul_ui")]
+    public static partial void mpz_addmul_ui(in mpz_t rop, in mpz_t op1, nuint op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fsubmul">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_submul")]
+    public static partial void mpz_submul(in mpz_t rop, in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fsubmul_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_submul_ui")]
+    public static partial void mpz_submul_ui(in mpz_t rop, in mpz_t op1, nuint op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fmul_005f2exp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_mul_2exp")]
+    public static partial void mpz_mul_2exp(in mpz_t rop, in mpz_t op1, nuint op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fneg">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_neg")]
+    public static partial void mpz_neg(in mpz_t rop, in mpz_t op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Integer-Arithmetic#index-mpz_005fabs">See the GMP manual</see>
@@ -184,10 +256,226 @@ public static unsafe partial class Gmp
     #region Division Functions
 
     /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fq">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_q")]
+    public static partial void mpz_cdiv_q(in mpz_t q, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fr">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_r")]
+    public static partial void mpz_cdiv_r(in mpz_t q, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fqr">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_qr")]
+    public static partial void mpz_cdiv_qr(in mpz_t q, in mpz_t r, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fq_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_q_ui")]
+    public static partial nuint mpz_cdiv_q_ui(in mpz_t q, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fr_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_r_ui")]
+    public static partial nuint mpz_cdiv_r_ui(in mpz_t q, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fqr_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_qr_ui")]
+    public static partial nuint mpz_cdiv_qr_ui(in mpz_t q, in mpz_t r, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_ui")]
+    public static partial nuint mpz_cdiv_ui(in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fq_005f2exp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_q_2exp")]
+    public static partial void mpz_cdiv_q_2exp(in mpz_t q, in mpz_t n, nuint b);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcdiv_005fr_005f2exp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_cdiv_r_2exp")]
+    public static partial void mpz_cdiv_r_2exp(in mpz_t r, in mpz_t n, nuint b);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fq">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_q")]
+    public static partial void mpz_fdiv_q(in mpz_t q, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fr">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_r")]
+    public static partial void mpz_fdiv_r(in mpz_t q, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fqr">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_qr")]
+    public static partial void mpz_fdiv_qr(in mpz_t q, in mpz_t r, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fq_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_q_ui")]
+    public static partial nuint mpz_fdiv_q_ui(in mpz_t q, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fr_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_r_ui")]
+    public static partial nuint mpz_fdiv_r_ui(in mpz_t q, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fqr_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_qr_ui")]
+    public static partial nuint mpz_fdiv_qr_ui(in mpz_t q, in mpz_t r, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_ui")]
+    public static partial nuint mpz_fdiv_ui(in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fq_005f2exp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_q_2exp")]
+    public static partial void mpz_fdiv_q_2exp(in mpz_t q, in mpz_t n, nuint b);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ffdiv_005fr_005f2exp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fdiv_r_2exp")]
+    public static partial void mpz_fdiv_r_2exp(in mpz_t r, in mpz_t n, nuint b);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fq">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_q")]
+    public static partial void mpz_tdiv_q(in mpz_t q, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fr">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_r")]
+    public static partial void mpz_tdiv_r(in mpz_t q, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fqr">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_qr")]
+    public static partial void mpz_tdiv_qr(in mpz_t q, in mpz_t r, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fq_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_q_ui")]
+    public static partial nuint mpz_tdiv_q_ui(in mpz_t q, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fr_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_r_ui")]
+    public static partial nuint mpz_tdiv_r_ui(in mpz_t q, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fqr_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_qr_ui")]
+    public static partial nuint mpz_tdiv_qr_ui(in mpz_t q, in mpz_t r, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_ui")]
+    public static partial nuint mpz_tdiv_ui(in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fq_005f2exp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_q_2exp")]
+    public static partial void mpz_tdiv_q_2exp(in mpz_t q, in mpz_t n, nuint b);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005ftdiv_005fr_005f2exp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tdiv_r_2exp")]
+    public static partial void mpz_tdiv_r_2exp(in mpz_t r, in mpz_t n, nuint b);
+
+    /// <summary>
     /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fmod">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_mod")]
     public static partial void mpz_mod(in mpz_t r, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fmod_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_mod_ui")]
+    public static partial void mpz_mod_ui(in mpz_t r, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fdivexact">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_divexact")]
+    public static partial void mpz_divexact(in mpz_t q, in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fdivexact_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_divexact_ui")]
+    public static partial void mpz_divexact_ui(in mpz_t q, in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fdivisible_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_divisible_p")]
+    public static partial int mpz_divisible_p(in mpz_t n, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fdivisible_005fui_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_divisible_ui_p")]
+    public static partial int mpz_divisible_ui_p(in mpz_t n, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fdivisible_005f2exp_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_divisible_2exp_p")]
+    public static partial int mpz_divisible_2exp_p(in mpz_t n, nuint b);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcongruent_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_congruent_p")]
+    public static partial int mpz_congruent_p(in mpz_t n, in mpz_t c, in mpz_t d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcongruent_005fui_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_congruent_ui_p")]
+    public static partial int mpz_congruent_ui_p(in mpz_t n, nuint c, nuint d);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Division#index-mpz_005fcongruent_005f2exp_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_congruent_2exp_p")]
+    public static partial int mpz_congruent_2exp_p(in mpz_t n, in mpz_t c, nuint b);
 
     #endregion
 
@@ -198,6 +486,30 @@ public static unsafe partial class Gmp
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmpz_powm")]
     public static partial void mpz_powm(in mpz_t rop, in mpz_t @base, in mpz_t exp, in mpz_t mod);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Exponentiation#index-mpz_005fpowm_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_powm_ui")]
+    public static partial void mpz_powm_ui(in mpz_t rop, in mpz_t @base, nuint exp, in mpz_t mod);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Exponentiation#index-mpz_005fpowm_005fsec">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_powm_sec")]
+    public static partial void mpz_powm_sec(in mpz_t rop, in mpz_t @base, in mpz_t exp, in mpz_t mod);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Exponentiation#index-mpz_005fpow_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_pow_ui")]
+    public static partial void mpz_pow_ui(in mpz_t rop, in mpz_t @base, nuint exp);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Exponentiation#index-mpz_005fui_005fpow_005fui">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_ui_pow_ui")]
+    public static partial void mpz_ui_pow_ui(in mpz_t rop, nuint @base, nuint exp);
 
     #endregion
 
@@ -268,7 +580,131 @@ public static unsafe partial class Gmp
 
     #endregion
 
+    #region Logical and Bit Manipulation Functions
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fand">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_and")]
+    public static partial void mpz_and(in mpz_t rop, in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fior">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_ior")]
+    public static partial void mpz_ior(in mpz_t rop, in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fxor">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_xor")]
+    public static partial void mpz_xor(in mpz_t rop, in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fcom">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_com")]
+    public static partial void mpz_com(in mpz_t rop, in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fpopcount">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_popcount")]
+    public static partial nuint mpz_popcount(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fhamdist">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_hamdist")]
+    public static partial nuint mpz_hamdist(in mpz_t op1, in mpz_t op2);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fscan0">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_scan0")]
+    public static partial nuint mpz_scan0(in mpz_t op, nuint starting_bit);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fscan1">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_scan1")]
+    public static partial nuint mpz_scan1(in mpz_t op, nuint starting_bit);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fsetbit">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_setbit")]
+    public static partial void mpz_setbit(in mpz_t rop, nuint bit_index);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fclrbit">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_clrbit")]
+    public static partial void mpz_clrbit(in mpz_t rop, nuint bit_index);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005fcombit">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_combit")]
+    public static partial void mpz_combit(in mpz_t rop, nuint bit_index);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Integer-Logic-and-Bit-Fiddling#index-mpz_005ftstbit">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_tstbit")]
+    public static partial int mpz_tstbit(in mpz_t op, nuint bit_index);
+
+    #endregion
+
     #region Miscellaneous Functions
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005ffits_005fulong_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fits_ulong_p")]
+    public static partial int mpz_fits_ulong_p(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005ffits_005fslong_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fits_slong_p")]
+    public static partial int mpz_fits_slong_p(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005ffits_005fuint_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fits_uint_p")]
+    public static partial int mpz_fits_uint_p(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005ffits_005fsint_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fits_sint_p")]
+    public static partial int mpz_fits_sint_p(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005ffits_005fushort_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fits_ushort_p")]
+    public static partial int mpz_fits_ushort_p(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005ffits_005fsshort_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_fits_sshort_p")]
+    public static partial int mpz_fits_sshort_p(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005fodd_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_odd_p")]
+    public static partial int mpz_odd_p(in mpz_t op);
+
+    /// <summary>
+    /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005feven_005fp">See the GMP manual</see>
+    /// </summary>
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_even_p")]
+    public static partial int mpz_even_p(in mpz_t op);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Miscellaneous-Integer-Functions#index-mpz_005fsizeinbase">See the GMP manual</see>
