@@ -32,8 +32,7 @@ jobs:
         run: |
           ./.bootstrap
           ./configure \
-            --disable-static \
-            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+            --disable-static
           make -j$(nproc)
           make check
           strip .libs/libgmp.so
@@ -67,8 +66,7 @@ jobs:
         run: |
           ./.bootstrap
           ./configure \
-            --disable-static \
-            ${{ matrix.arch == 'arm64' && '' || '--enable-fat' }}
+            --disable-static
           make -j$(sysctl -n hw.ncpu)
           make check
           strip -x .libs/libgmp.dylib
@@ -113,7 +111,7 @@ jobs:
           ./configure \
             --disable-static \
             --enable-shared \
-            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '--enable-fat' }}
+            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
           make -j$(nproc)
           make check
           strip .libs/libgmp-10.dll
@@ -155,11 +153,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          head_branch=feature/gmp-build-${{ github.run_number }}-${{ github.run_attempt }}
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          head_branch=feature/gmp-build-$GITHUB_RUN_NUMBER-$GITHUB_RUN_ATTEMPT
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git checkout -b $head_branch
           git add -A
           git commit -am "Update GMP binaries"
           git push origin $head_branch
-          gh pr create -B main -H $head_branch -t "Update GMP binaries" -b "Built and updated GMP binaries"
+          gh pr create -B $GITHUB_REF_NAME -H $head_branch -t "Update GMP binaries" -b "Built and updated GMP binaries"
