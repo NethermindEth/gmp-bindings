@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: Check out gmp-bindings repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
