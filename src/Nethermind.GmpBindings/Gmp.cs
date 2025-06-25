@@ -21,9 +21,9 @@ public static unsafe partial class Gmp
             Marshal.ReadIntPtr(NativeLibrary.GetExport(handle, "__gmp_version"))
             ) ?? string.Empty;
 
-        NativeLibrary.Free(handle);
-
         mp_get_memory_functions(out _allocate, out _reallocate, out _free);
+
+        NativeLibrary.Free(handle);
     }
 
     private static nint OnResolvingUnmanagedDll(Assembly context, string name)
