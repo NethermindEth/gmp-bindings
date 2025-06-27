@@ -32,8 +32,6 @@ jobs:
 
       - name: Check out gmp-6.3 repository
         uses: actions/checkout@v4
-        with:
-          repository: gmp-mirror/gmp-6.3
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
