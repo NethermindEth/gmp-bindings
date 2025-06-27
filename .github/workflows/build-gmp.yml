@@ -50,6 +50,7 @@ jobs:
           export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
           export BUILD_PATH_PREFIX_MAP="$PWD=."
           export LDFLAGS="$LDFLAGS -Wl,--build-id=none"
+          export CFLAGS="$CFLAGS -fdebug-prefix-map=$PWD=."
           ./.bootstrap
           ./configure \
             --disable-static \
