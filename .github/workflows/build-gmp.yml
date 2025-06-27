@@ -48,6 +48,7 @@ jobs:
         shell: msys2 {0}
         run: |
           export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+          export BUILD_PATH_PREFIX_MAP="$PWD=."
           export LDFLAGS="$LDFLAGS -Wl,--build-id=none"
           ./.bootstrap
           ./configure \
