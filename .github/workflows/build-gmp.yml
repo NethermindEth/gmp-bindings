@@ -48,6 +48,7 @@ jobs:
         shell: msys2 {0}
         run: |
           export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+          export LDFLAGS="$LDFLAGS --build-id=none"
           ./.bootstrap
           ./configure \
             --disable-static \
