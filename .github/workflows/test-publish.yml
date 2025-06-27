@@ -29,6 +29,9 @@ jobs:
         with:
           lfs: true
 
+      - name: Remove preinstalled GMP
+        run: sudo apt-get purge -y libgmp-dev
+
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
 
