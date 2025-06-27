@@ -32,6 +32,8 @@ jobs:
 
       - name: Check out gmp-6.3 repository
         uses: actions/checkout@v4
+        with:
+          repository: gmp-mirror/gmp-6.3
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
@@ -59,7 +61,7 @@ jobs:
           make -j$(nproc)
           ##make check
           #strip .libs/libgmp-10.dll
-          #mv .libs/libgmp-10.dll .libs/gmp.dll
+          mv .libs/libgmp-10.dll .libs/gmp.dll
           #sha256sum .libs/gmp.dll
 
       - name: Upload artifact
