@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: win-${{ matrix.arch }}
-          path: .libs/*.dll
+          path: .libs
           retention-days: ${{ env.RETENTION }}
           if-no-files-found: error
 
