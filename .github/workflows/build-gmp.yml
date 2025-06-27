@@ -52,21 +52,7 @@ jobs:
           export LDFLAGS="$LDFLAGS -Wl,--build-id=none"
           export CFLAGS="$CFLAGS -fdebug-prefix-map=$PWD=."
           ./.bootstrap
-          ./configure \
-            --disable-static \
-            --enable-shared \
-            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
-          make -j$(nproc)
-          ##make check
-          strip .libs/libgmp-10.dll
-          mv .libs/libgmp-10.dll .libs/gmp.dll
-          sha256sum .libs/gmp.dll
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: win-${{ matrix.arch }}
-          path: .libs/gmp.dll
-          retention-days: ${{ env.RETENTION }}
-          if-no-files-found: error
+          echo $CFLAGS
+          echo $LDFLAGS
+          
 
