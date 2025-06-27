@@ -54,7 +54,7 @@ jobs:
             --enable-shared \
             ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
           make -j$(nproc)
-          #make check
+          ##make check
           strip .libs/libgmp-10.dll
           mv .libs/libgmp-10.dll .libs/gmp.dll
           sha256sum .libs/gmp.dll
