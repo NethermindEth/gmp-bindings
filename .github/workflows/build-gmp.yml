@@ -61,14 +61,14 @@ jobs:
           make -j$(nproc)
           ##make check
           strip .libs/libgmp-10.dll
-          cp .libs/libgmp-10.dll .libs/gmp.dll
+          mv .libs/libgmp-10.dll .libs/gmp.dll
           sha256sum .libs/gmp.dll
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: win-${{ matrix.arch }}
-          path: .libs
+          path: .libs/gmp.dll
           retention-days: ${{ env.RETENTION }}
           if-no-files-found: error
 
