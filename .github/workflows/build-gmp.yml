@@ -48,12 +48,12 @@ jobs:
         shell: msys2 {0}
         run: |
           export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
-          #export LDFLAGS="$LDFLAGS --build-id=none"
+          export LDFLAGS="$LDFLAGS -Wl,--build-id=none"
           ./.bootstrap
           ./configure \
             --disable-static \
             --enable-shared \
-            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }} LDFLAGS=" --build-id=none"
+            ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
           make -j$(nproc)
           ##make check
           strip .libs/libgmp-10.dll
