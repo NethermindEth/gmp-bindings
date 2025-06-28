@@ -34,7 +34,7 @@ jobs:
           ./configure \
             --host=${{ matrix.arch == 'arm64' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
             --disable-static \
-            ${{ matrix.arch == 'arm64' && '' || '--enable-fat CFLAGS="-mtune=haswell -O2"' }}
+            ${{ matrix.arch == 'arm64' && ' ' || '--enable-fat CFLAGS="-mtune=haswell -O2"' }}
           make -j$(nproc)
           make check
           strip .libs/libgmp.so
@@ -70,7 +70,7 @@ jobs:
           ./configure \
             --host=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
             --disable-static \
-            ${{ matrix.arch == 'arm64' && '' || '--enable-fat CFLAGS="-mtune=haswell -O2"' }}
+            ${{ matrix.arch == 'arm64' && ' ' || '--enable-fat CFLAGS="-mtune=haswell -O2"' }}
           make -j$(sysctl -n hw.ncpu)
           make check
           strip -x .libs/libgmp.dylib
