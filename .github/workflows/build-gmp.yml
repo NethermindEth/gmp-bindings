@@ -111,6 +111,7 @@ jobs:
           export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
           ./.bootstrap
           ./configure \
+            --host=${{ matrix.arch == 'arm64' && 'aarch64-w64-mingw32' || 'x86_64-w64-mingw32' }} \
             --disable-static \
             --enable-shared \
             ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
