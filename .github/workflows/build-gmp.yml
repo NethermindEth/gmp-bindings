@@ -117,8 +117,7 @@ jobs:
             ${{ matrix.arch == 'arm64' && '--disable-assembly' || '' }}
           make -j$(nproc)
           make check
-          strip .libs/libgmp-10.dll
-          mv .libs/libgmp-10.dll .libs/gmp.dll
+          strip -o .libs/gmp.dll .libs/libgmp-10.dll
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
