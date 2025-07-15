@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Demerzel Solutions Limited
 // SPDX-License-Identifier: MIT
 
-#pragma warning disable IDE1006 // Naming rules
+#pragma warning disable IDE1006 // Naming Styles
 
 using System.Runtime.InteropServices;
 
