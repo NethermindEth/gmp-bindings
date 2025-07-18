@@ -106,7 +106,7 @@ public readonly ref struct mpz_t
     {
         ArgumentException.ThrowIfNullOrEmpty(value);
 
-        fixed (byte* str = Encoding.UTF8.GetBytes(value))
+        fixed (byte* str = &MemoryMarshal.GetArrayDataReference(Encoding.UTF8.GetBytes(value)))
         {
             Unsafe.SkipInit(out mpz_t x);
 

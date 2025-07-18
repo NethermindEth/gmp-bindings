@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Demerzel Solutions Limited
 // SPDX-License-Identifier: MIT
 
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Nethermind.GmpBindings.Tests;
@@ -57,7 +58,7 @@ public class IntAssignmentTests
         var value = "0x1000";
         using mpz_t x = default;
 
-        fixed (byte* str = Encoding.UTF8.GetBytes(value))
+        fixed (byte* str = &MemoryMarshal.GetArrayDataReference(Encoding.UTF8.GetBytes(value)))
         {
             var status = Gmp.mpz_set_str(x, (nint)str, 0);
             Assert.Equal(0, status);
