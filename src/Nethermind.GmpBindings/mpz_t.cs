@@ -13,6 +13,7 @@ namespace Nethermind.GmpBindings;
 /// Represents a multiple precision integer type.
 /// <see href="https://gmplib.org/manual/Nomenclature-and-Types#index-mpz_005ft">See the GMP manual</see>.
 /// </summary>
+[SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
 public readonly ref struct mpz_t
 {
