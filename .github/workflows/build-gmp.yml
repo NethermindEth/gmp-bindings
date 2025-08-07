@@ -51,7 +51,7 @@ jobs:
     strategy:
       matrix:
         arch: [arm64, x64]
-    runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-13' }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-latest-large' }}
     steps:
       - name: Check out gmp-6.3 repository
         uses: actions/checkout@v4
