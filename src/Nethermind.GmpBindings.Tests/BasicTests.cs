@@ -3,93 +3,113 @@
 
 namespace Nethermind.GmpBindings.Tests;
 
+[DependsOn<AllocationTests>]
 public class BasicTests
 {
-    [Fact]
-    public void Should_match_version() => Assert.Equal("6.3.0", Gmp.version);
+    [Test]
+    public async Task Should_match_version() => await Assert.That(Gmp.version).IsEqualTo("6.3.0");
 
-    [Fact]
-    public void Should_initialize()
+    [Test]
+    public async Task Should_initialize()
     {
-        Exception? ex = Record.Exception(static () =>
+        await Assert.That(static () =>
         {
             using var x = mpz_t.Create();
-        });
-
-        Assert.Null(ex);
+        }).ThrowsNothing();
     }
 
-    [Fact]
-    public void Should_initialize_from_mpz_t()
+    [Test]
+    public async Task Should_initialize_from_mpz_t()
     {
-        using var x = mpz_t.Create("1024");
-        using var y = mpz_t.Create(x);
+        int result;
 
-        Assert.Equal(0, Gmp.mpz_cmp(x, y));
+        {
+            using var x = mpz_t.Create("1024");
+            using var y = mpz_t.Create(x);
+            result = Gmp.mpz_cmp(x, y);
+        }
+
+        await Assert.That(result).IsEqualTo(0);
     }
 
-    [Fact]
-    public void Should_initialize_from_nuint()
+    [Test]
+    public async Task Should_initialize_from_nuint()
     {
-        var value = 1024U;
-        using var x = mpz_t.Create(value);
+        int result;
 
-        Assert.Equal(0, Gmp.mpz_cmp_ui(x, value));
+        {
+            var value = 1024U;
+            using var x = mpz_t.Create(value);
+            result = Gmp.mpz_cmp_ui(x, value);
+        }
+
+        await Assert.That(result).IsEqualTo(0);
     }
 
-    [Fact]
-    public void Should_initialize_from_nint()
+    [Test]
+    public async Task Should_initialize_from_nint()
     {
-        var value = 1024;
-        using var x = mpz_t.Create(value);
+        int result;
 
-        Assert.Equal(0, Gmp.mpz_cmp_si(x, value));
+        {
+            var value = 1024;
+            using var x = mpz_t.Create(value);
+            result = Gmp.mpz_cmp_si(x, value);
+        }
+
+        await Assert.That(result).IsEqualTo(0);
     }
 
-    [Fact]
-    public void Should_initialize_from_double()
+    [Test]
+    public async Task Should_initialize_from_double()
     {
-        using var x = mpz_t.Create(double.MaxValue);
+        int result;
 
-        Assert.Equal(0, Gmp.mpz_cmp_d(x, double.MaxValue));
+        {
+            using var x = mpz_t.Create(double.MaxValue);
+            result = Gmp.mpz_cmp_d(x, double.MaxValue);
+        }
+
+        await Assert.That(result).IsEqualTo(0);
     }
 
-    [Theory]
-    [InlineData("0b01010101010101010101010101010101", 0)]
-    [InlineData("1111222233334444555566667777888899990000", 0)]
-    [InlineData("0x11223344556677889900aabbccddeeff", 0)]
-    [InlineData("1100110011001100", 2)]
-    [InlineData("-210120210", 3)]
-    [InlineData("010203040506070809000a0b0c0d0e0f", 16)]
-    public void Should_initialize_from_string(string value, int @base)
+    [Test]
+    [Arguments("0b01010101010101010101010101010101", 0)]
+    [Arguments("1111222233334444555566667777888899990000", 0)]
+    [Arguments("0x11223344556677889900aabbccddeeff", 0)]
+    [Arguments("1100110011001100", 2)]
+    [Arguments("-210120210", 3)]
+    [Arguments("010203040506070809000a0b0c0d0e0f", 16)]
+    public async Task Should_initialize_from_string(string value, int @base)
     {
-        Exception? ex = Record.Exception(() =>
+        await Assert.That(() =>
         {
             using var x = mpz_t.Create(value, @base);
-        });
-
-        Assert.Null(ex);
+        }).ThrowsNothing();
     }
 
-    [Fact]
-    public void Should_fail_on_init_if_null_value()
+    [Test]
+    public async Task Should_fail_on_init_if_null_value()
     {
-        Assert.Throws<ArgumentNullException>(static () =>
+        await Assert.That(static () =>
         {
             using var _ = mpz_t.Create(null!);
-        });
+        }).Throws<ArgumentNullException>();
     }
 
-    [Theory]
-    [InlineData("", 0)]
-    [InlineData("1234567890", 1)]
-    [InlineData("1234567890", 63)]
-    [InlineData("1234567890x", 16)]
-    public void Should_fail_on_init_if_invalid_value(string value, int @base)
+    [Test]
+    [Arguments("", 0)]
+    [Arguments("1234567890", 1)]
+    [Arguments("1234567890", 63)]
+    [Arguments("1234567890x", 16)]
+    public async Task Should_fail_on_init_if_invalid_value(string value, int @base)
     {
-        Assert.Throws<ArgumentException>("value", () =>
-        {
-            using var _ = mpz_t.Create(value, @base);
-        });
+        await Assert
+            .That(() =>
+            {
+                using var _ = mpz_t.Create(value, @base);
+            })
+            .Throws<ArgumentException>()
+            .WithParameterName("value");
     }
 }

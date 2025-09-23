@@ -5,40 +5,53 @@ using System.Runtime.InteropServices;
 
 namespace Nethermind.GmpBindings.Tests;
 
+[DependsOn<AllocationTests>]
 public class ImportExportTests
 {
-    [Theory]
-    [InlineData("0400")]
-    [InlineData("010203040506070809000a0b0c0d0e0f")]
-    public unsafe void Should_export_from_mpz_t(string value)
+    [Test]
+    [Arguments("0400")]
+    [Arguments("010203040506070809000a0b0c0d0e0f")]
+    public async Task Should_export_from_mpz_t(string value)
     {
-        using var x = mpz_t.Create(value, 16);
-        Span<byte> data = stackalloc byte[value.Length / 2];
+        nuint count;
+        int dataLength = value.Length / 2;
+        string dataHex;
 
-        fixed (byte* ptr = &MemoryMarshal.GetReference(data))
+        unsafe
         {
-            Gmp.mpz_export((nint)ptr, out var count, 1, 1, 1, nuint.Zero, x);
+            using var x = mpz_t.Create(value, 16);
+            Span<byte> data = stackalloc byte[value.Length / 2];
 
-            Assert.Equal(data.Length, (int)count);
+            fixed (byte* ptr = &MemoryMarshal.GetReference(data))
+                Gmp.mpz_export((nint)ptr, out count, 1, 1, 1, nuint.Zero, x);
+
+            dataHex = Convert.ToHexStringLower(data);
         }
 
-        Assert.Equal(value, Convert.ToHexStringLower(data));
+        await Assert.That((int)count).IsEqualTo(dataLength);
+        await Assert.That(value).IsEqualTo(dataHex);
     }
 
-    [Theory]
-    [InlineData("0400")]
-    [InlineData("010203040506070809000a0b0c0d0e0f")]
-    public unsafe void Should_import_to_mpz_t(string value)
+    [Test]
+    [Arguments("0400")]
+    [Arguments("010203040506070809000a0b0c0d0e0f")]
+    public async Task Should_import_to_mpz_t(string value)
     {
-        Span<byte> import = Convert.FromHexString(value);
-        using var x = mpz_t.Create();
+        string? actualValue;
 
-        fixed (byte* ptr = &MemoryMarshal.GetReference(import))
-            Gmp.mpz_import(x, (nuint)import.Length, 1, 1, 1, nuint.Zero, (nint)ptr);
+        unsafe
+        {
+            Span<byte> import = Convert.FromHexString(value);
+            using var x = mpz_t.Create();
 
-        using GmpHandle str = new(Gmp.mpz_get_str(nint.Zero, 16, x));
-        var actualValue = Marshal.PtrToStringUTF8(str.DangerousGetHandle());
+            fixed (byte* ptr = &MemoryMarshal.GetReference(import))
+                Gmp.mpz_import(x, (nuint)import.Length, 1, 1, 1, nuint.Zero, (nint)ptr);
 
-        Assert.Equal(value, actualValue?.PadLeft(value.Length, '0'));
+            using GmpHandle str = new(Gmp.mpz_get_str(nint.Zero, 16, x));
+
+            actualValue = Marshal.PtrToStringUTF8(str.DangerousGetHandle());
+        }
+
+        await Assert.That(actualValue?.PadLeft(value.Length, '0')).IsEqualTo(value);
     }
 }
