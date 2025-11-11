@@ -45,7 +45,7 @@ jobs:
 
       - name: Test
         working-directory: src/Nethermind.GmpBindings.Tests
-        run: dotnet run -c release
+        run: dotnet test -c release
 
   publish:
     name: Publish
