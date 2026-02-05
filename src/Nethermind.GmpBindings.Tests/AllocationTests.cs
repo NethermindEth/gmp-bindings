@@ -10,14 +10,14 @@ namespace Nethermind.GmpBindings.Tests;
 public class AllocationCollection { }
 
 [Collection(nameof(AllocationTests))]
-public class AllocationTests : IDisposable
+public sealed class AllocationTests : IDisposable
 {
     private static int _counter;
 
     [Fact]
     public unsafe void Should_set_memory_functions()
     {
-        Gmp.mp_set_memory_functions(&TestAlloc, &TestReAlloc, &TestFree);
+        Gmp.mp_set_memory_functions(&TestAlloc, &TestRealloc, &TestFree);
 
         nint ptr = Gmp.alloc(128);
         Assert.Equal(1, _counter);
@@ -56,26 +56,26 @@ public class AllocationTests : IDisposable
     public void Dispose() => _counter = default;
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static nint TestAlloc(nuint size)
+    private static unsafe nint TestAlloc(nuint size)
     {
         _counter++;
 
-        return Marshal.AllocHGlobal((nint)size);
+        return (nint)NativeMemory.Alloc(size);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static nint TestReAlloc(nint ptr, nuint _, nuint newSize)
+    private static unsafe nint TestRealloc(nint ptr, nuint _, nuint newSize)
     {
         _counter++;
 
-        return Marshal.ReAllocHGlobal(ptr, (nint)newSize);
+        return (nint)NativeMemory.Realloc((void*)ptr, newSize);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static void TestFree(nint ptr, nuint _)
+    private static unsafe void TestFree(nint ptr, nuint _)
     {
         _counter++;
 
-        Marshal.FreeHGlobal(ptr);
+        NativeMemory.Free((void*)ptr);
     }
 }
