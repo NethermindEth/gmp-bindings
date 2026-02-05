@@ -13,7 +13,7 @@ public class AllocationTests
     [Test]
     public async Task Should_set_memory_functions()
     {
-        unsafe { Gmp.mp_set_memory_functions(&TestAlloc, &TestReAlloc, &TestFree); }
+        unsafe { Gmp.mp_set_memory_functions(&TestAlloc, &TestRealloc, &TestFree); }
 
         nint ptr = Gmp.alloc(128);
         await Assert.That(_counter).IsEqualTo(1);
@@ -64,26 +64,26 @@ public class AllocationTests
     public static void Reset() => _counter = default;
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static nint TestAlloc(nuint size)
+    private static unsafe nint TestAlloc(nuint size)
     {
         _counter++;
 
-        return Marshal.AllocHGlobal((nint)size);
+        return (nint)NativeMemory.Alloc(size);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static nint TestReAlloc(nint ptr, nuint _, nuint newSize)
+    private static unsafe nint TestRealloc(nint ptr, nuint _, nuint newSize)
     {
         _counter++;
 
-        return Marshal.ReAllocHGlobal(ptr, (nint)newSize);
+        return (nint)NativeMemory.Realloc((void*)ptr, newSize);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static void TestFree(nint ptr, nuint _)
+    private static unsafe void TestFree(nint ptr, nuint _)
     {
         _counter++;
 
-        Marshal.FreeHGlobal(ptr);
+        NativeMemory.Free((void*)ptr);
     }
 }
