@@ -5,14 +5,20 @@ namespace Nethermind.GmpBindings.Tests;
 
 public class MiscTests
 {
-    [Theory]
-    [InlineData("1024", 4)]
-    [InlineData("0x010203040506070809000a0b0c0d0e0f", 37)]
-    public void Should_return_size_in_base(string value, int size)
+    [Test]
+    [Arguments("1024", 4)]
+    [Arguments("0x010203040506070809000a0b0c0d0e0f", 37)]
+    public async Task Should_return_size_in_base(string value, int size)
     {
-        using var x = mpz_t.Create(value);
+        int result;
 
-        Assert.Equal(size, (int)Gmp.mpz_sizeinbase(x, 10));
+        {
+            using var x = mpz_t.Create(value);
+
+            result = (int)Gmp.mpz_sizeinbase(x, 10);
+        }
+
+        await Assert.That(result).IsEqualTo(size);
     }
 
     // TODO: More tests

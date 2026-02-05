@@ -26,13 +26,13 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-latest
-          - macos-latest-large
+          - macos-15-intel
           - windows-latest
           - windows-11-arm
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           lfs: true
 
@@ -45,7 +45,9 @@ jobs:
 
       - name: Test
         working-directory: src/Nethermind.GmpBindings.Tests
-        run: dotnet test -c release
+        run: |
+          dotnet test -c release
+          dotnet test -c release --no-restore -- --treenode-filter "/*/*/AllocationTests/*"
 
   publish:
     name: Publish
@@ -54,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           lfs: true
 

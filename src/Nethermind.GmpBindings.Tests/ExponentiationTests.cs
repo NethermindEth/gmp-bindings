@@ -5,19 +5,24 @@ namespace Nethermind.GmpBindings.Tests;
 
 public class ExponentiationTests
 {
-    [Theory]
-    [InlineData(2, 256, 997, 668)]
-    [InlineData(7, 47, 1023, 886)]
-    public void Should_do_powm(int @base, int exp, int mod, int result)
+    [Test]
+    [Arguments(2, 256, 997, 668)]
+    [Arguments(7, 47, 1023, 886)]
+    public async Task Should_do_powm(int @base, int exp, int mod, int result)
     {
-        using var b = mpz_t.Create(@base);
-        using var e = mpz_t.Create(exp);
-        using var m = mpz_t.Create(mod);
-        using var r = mpz_t.Create();
+        nint outcome;
 
-        Gmp.mpz_powm(r, b, e, m);
+        {
+            using var b = mpz_t.Create(@base);
+            using var e = mpz_t.Create(exp);
+            using var m = mpz_t.Create(mod);
+            using var r = mpz_t.Create();
 
-        Assert.Equal(result, Gmp.mpz_get_si(r));
+            Gmp.mpz_powm(r, b, e, m);
+            outcome = Gmp.mpz_get_si(r);
+        }
+
+        await Assert.That(outcome).IsEqualTo(result);
     }
 
     // TODO: More tests

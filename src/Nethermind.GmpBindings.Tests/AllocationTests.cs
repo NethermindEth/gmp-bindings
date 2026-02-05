@@ -6,54 +6,64 @@ using System.Runtime.InteropServices;
 
 namespace Nethermind.GmpBindings.Tests;
 
-[CollectionDefinition(nameof(AllocationTests), DisableParallelization = true)]
-public class AllocationCollection { }
-
-[Collection(nameof(AllocationTests))]
-public sealed class AllocationTests : IDisposable
+[Explicit]
+public class AllocationTests
 {
     private static int _counter;
 
-    [Fact]
-    public unsafe void Should_set_memory_functions()
+    [Test]
+    [DependsOn(nameof(Should_get_memory_functions))]
+    public async Task Should_set_memory_functions()
     {
-        Gmp.mp_set_memory_functions(&TestAlloc, &TestRealloc, &TestFree);
+        unsafe { Gmp.mp_set_memory_functions(&TestAlloc, &TestRealloc, &TestFree); }
 
         nint ptr = Gmp.alloc(128);
-        Assert.Equal(1, _counter);
+        await Assert.That(_counter).IsEqualTo(1);
 
         ptr = Gmp.realloc(ptr, 128, 256);
-        Assert.Equal(2, _counter);
+        await Assert.That(_counter).IsEqualTo(2);
 
         Gmp.free(ptr, 256);
-        Assert.Equal(3, _counter);
+        await Assert.That(_counter).IsEqualTo(3);
 
         // Restore defaults
-        Gmp.mp_set_memory_functions(null, null, null);
+        unsafe { Gmp.mp_set_memory_functions(null, null, null); }
     }
 
-    [Fact]
-    public unsafe void Should_get_memory_functions()
+    [Test]
+    public async Task Should_get_memory_functions()
     {
-        Gmp.mp_get_memory_functions(
-            out delegate* unmanaged[Cdecl]<nuint, nint> alloc,
-            out delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
-            out delegate* unmanaged[Cdecl]<nint, nuint, void> free);
+        bool hasAlloc;
+        bool hasRealloc;
+        bool hasFree;
 
-        Assert.True(alloc is not null);
-        Assert.True(realloc is not null);
-        Assert.True(free is not null);
+        unsafe
+        {
+            Gmp.mp_get_memory_functions(
+                out delegate* unmanaged[Cdecl]<nuint, nint> alloc,
+                out delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
+                out delegate* unmanaged[Cdecl]<nint, nuint, void> free);
+
+            hasAlloc = alloc is not null;
+            hasRealloc = realloc is not null;
+            hasFree = free is not null;
+        }
+
+        await Assert.That(hasAlloc).IsTrue();
+        await Assert.That(hasRealloc).IsTrue();
+        await Assert.That(hasFree).IsTrue();
 
         nint ptr = Gmp.alloc(128);
-        Assert.NotEqual(nint.Zero, ptr);
+        await Assert.That(ptr).IsNotEqualTo(nint.Zero);
 
         ptr = Gmp.realloc(ptr, 128, 256);
-        Assert.NotEqual(nint.Zero, ptr);
+        await Assert.That(ptr).IsNotEqualTo(nint.Zero);
 
         Gmp.free(ptr, 256);
     }
 
-    public void Dispose() => _counter = default;
+    [After(Class)]
+    public static void Reset() => _counter = default;
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe nint TestAlloc(nuint size)
