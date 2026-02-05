@@ -6,7 +6,6 @@ using System.Text;
 
 namespace Nethermind.GmpBindings.Tests;
 
-[DependsOn<AllocationTests>]
 public class IntAssignmentTests
 {
     [Test]

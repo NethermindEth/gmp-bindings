@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
     steps:
       - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: gmp-mirror/gmp-6.3
 
@@ -54,7 +54,7 @@ jobs:
     runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-latest-large' }}
     steps:
       - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: gmp-mirror/gmp-6.3
 
@@ -92,7 +92,7 @@ jobs:
         run: git config --global core.autocrlf input
 
       - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: gmp-mirror/gmp-6.3
 
@@ -134,7 +134,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download artifacts
         uses: actions/download-artifact@v4

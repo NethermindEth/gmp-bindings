@@ -6,11 +6,13 @@ using System.Runtime.InteropServices;
 
 namespace Nethermind.GmpBindings.Tests;
 
+[Explicit]
 public class AllocationTests
 {
     private static int _counter;
 
     [Test]
+    [DependsOn(nameof(Should_get_memory_functions))]
     public async Task Should_set_memory_functions()
     {
         unsafe { Gmp.mp_set_memory_functions(&TestAlloc, &TestRealloc, &TestFree); }

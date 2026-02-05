@@ -3,7 +3,6 @@
 
 namespace Nethermind.GmpBindings.Tests;
 
-[DependsOn<AllocationTests>]
 public class BasicTests
 {
     [Test]

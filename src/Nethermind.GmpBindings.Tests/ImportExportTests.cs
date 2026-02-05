@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 
 namespace Nethermind.GmpBindings.Tests;
 
-[DependsOn<AllocationTests>]
 public class ImportExportTests
 {
     [Test]
