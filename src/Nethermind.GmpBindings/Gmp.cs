@@ -49,7 +49,9 @@ public static unsafe partial class Gmp
             platform = "win";
         }
         else
+        {
             throw new PlatformNotSupportedException();
+        }
 
         var arch = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
 
