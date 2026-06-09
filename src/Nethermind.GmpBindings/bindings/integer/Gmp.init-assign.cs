@@ -39,6 +39,6 @@ public static partial class Gmp
     /// <summary>
     /// <see href="https://gmplib.org/manual/Simultaneous-Integer-Init-_0026-Assign#index-mpz_005finit_005fset_005fstr">See the GMP manual</see>
     /// </summary>
-    [LibraryImport(LibraryName, EntryPoint = "__gmpz_init_set_str")]
-    public static partial int mpz_init_set_str(in mpz_t rop, nint str, int @base);
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_init_set_str", StringMarshalling = StringMarshalling.Utf8)]
+    public static partial int mpz_init_set_str(in mpz_t rop, string str, int @base);
 }

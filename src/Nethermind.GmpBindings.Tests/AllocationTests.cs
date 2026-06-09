@@ -17,13 +17,14 @@ public class AllocationTests
     {
         unsafe { Gmp.mp_set_memory_functions(&TestAlloc, &TestRealloc, &TestFree); }
 
-        nint ptr = Gmp.alloc(128);
+        nint ptr;
+        unsafe { ptr = (nint)Gmp.alloc(128); }
         await Assert.That(_counter).IsEqualTo(1);
 
-        ptr = Gmp.realloc(ptr, 128, 256);
+        unsafe { ptr = (nint)Gmp.realloc((void*)ptr, 128, 256); }
         await Assert.That(_counter).IsEqualTo(2);
 
-        Gmp.free(ptr, 256);
+        unsafe { Gmp.free((void*)ptr, 256); }
         await Assert.That(_counter).IsEqualTo(3);
 
         // Restore defaults
@@ -40,9 +41,9 @@ public class AllocationTests
         unsafe
         {
             Gmp.mp_get_memory_functions(
-                out delegate* unmanaged[Cdecl]<nuint, nint> alloc,
-                out delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
-                out delegate* unmanaged[Cdecl]<nint, nuint, void> free);
+                out delegate* unmanaged[Cdecl]<nuint, void*> alloc,
+                out delegate* unmanaged[Cdecl]<void*, nuint, nuint, void*> realloc,
+                out delegate* unmanaged[Cdecl]<void*, nuint, void> free);
 
             hasAlloc = alloc is not null;
             hasRealloc = realloc is not null;
@@ -53,39 +54,40 @@ public class AllocationTests
         await Assert.That(hasRealloc).IsTrue();
         await Assert.That(hasFree).IsTrue();
 
-        nint ptr = Gmp.alloc(128);
+        nint ptr;
+        unsafe { ptr = (nint)Gmp.alloc(128); }
         await Assert.That(ptr).IsNotEqualTo(nint.Zero);
 
-        ptr = Gmp.realloc(ptr, 128, 256);
+        unsafe { ptr = (nint)Gmp.realloc((void*)ptr, 128, 256); }
         await Assert.That(ptr).IsNotEqualTo(nint.Zero);
 
-        Gmp.free(ptr, 256);
+        unsafe { Gmp.free((void*)ptr, 256); }
     }
 
     [After(Class)]
     public static void Reset() => _counter = default;
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe nint TestAlloc(nuint size)
+    private static unsafe void* TestAlloc(nuint size)
     {
         _counter++;
 
-        return (nint)NativeMemory.Alloc(size);
+        return NativeMemory.Alloc(size);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe nint TestRealloc(nint ptr, nuint _, nuint newSize)
+    private static unsafe void* TestRealloc(void* ptr, nuint _, nuint newSize)
     {
         _counter++;
 
-        return (nint)NativeMemory.Realloc((void*)ptr, newSize);
+        return NativeMemory.Realloc(ptr, newSize);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe void TestFree(nint ptr, nuint _)
+    private static unsafe void TestFree(void* ptr, nuint _)
     {
         _counter++;
 
-        NativeMemory.Free((void*)ptr);
+        NativeMemory.Free(ptr);
     }
 }

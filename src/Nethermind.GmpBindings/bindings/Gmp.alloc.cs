@@ -12,32 +12,32 @@ namespace Nethermind.GmpBindings;
 /// </summary>
 public static unsafe partial class Gmp
 {
-    private static delegate* unmanaged[Cdecl]<nuint, nint> _alloc;
-    private static delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> _realloc;
-    private static delegate* unmanaged[Cdecl]<nint, nuint, void> _free;
+    private static delegate* unmanaged[Cdecl]<nuint, void*> _alloc;
+    private static delegate* unmanaged[Cdecl]<void*, nuint, nuint, void*> _realloc;
+    private static delegate* unmanaged[Cdecl]<void*, nuint, void> _free;
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-allocate_005ffunction">See the GMP manual</see>
     /// </summary>
-    public static nint alloc(nuint alloc_size) => _alloc(alloc_size);
+    public static void* alloc(nuint alloc_size) => _alloc(alloc_size);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-reallocate_005ffunction">See the GMP manual</see>
     /// </summary>
-    public static nint realloc(nint ptr, nuint old_size, nuint new_size) => _realloc(ptr, old_size, new_size);
+    public static void* realloc(void* ptr, nuint old_size, nuint new_size) => _realloc(ptr, old_size, new_size);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-free_005ffunction">See the GMP manual</see>
     /// </summary>
-    public static void free(nint ptr, nuint size) => _free(ptr, size);
+    public static void free(void* ptr, nuint size) => _free(ptr, size);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-mp_005fset_005fmemory_005ffunctions">See the GMP manual</see>
     /// </summary>
     public static void mp_set_memory_functions(
-        delegate* unmanaged[Cdecl]<nuint, nint> alloc,
-        delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
-        delegate* unmanaged[Cdecl]<nint, nuint, void> free)
+        delegate* unmanaged[Cdecl]<nuint, void*> alloc,
+        delegate* unmanaged[Cdecl]<void*, nuint, nuint, void*> realloc,
+        delegate* unmanaged[Cdecl]<void*, nuint, void> free)
     {
         __gmp_set_memory_functions(alloc, realloc, free);
         mp_get_memory_functions(out _alloc, out _realloc, out _free);
@@ -45,16 +45,16 @@ public static unsafe partial class Gmp
 
     [LibraryImport(LibraryName)]
     private static partial void __gmp_set_memory_functions(
-        delegate* unmanaged[Cdecl]<nuint, nint> alloc,
-        delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
-        delegate* unmanaged[Cdecl]<nint, nuint, void> free);
+        delegate* unmanaged[Cdecl]<nuint, void*> alloc,
+        delegate* unmanaged[Cdecl]<void*, nuint, nuint, void*> realloc,
+        delegate* unmanaged[Cdecl]<void*, nuint, void> free);
 
     /// <summary>
     /// <see href="https://gmplib.org/manual/Custom-Allocation#index-mp_005fget_005fmemory_005ffunctions">See the GMP manual</see>
     /// </summary>
     [LibraryImport(LibraryName, EntryPoint = "__gmp_get_memory_functions")]
     public static partial void mp_get_memory_functions(
-        out delegate* unmanaged[Cdecl]<nuint, nint> alloc,
-        out delegate* unmanaged[Cdecl]<nint, nuint, nuint, nint> realloc,
-        out delegate* unmanaged[Cdecl]<nint, nuint, void> free);
+        out delegate* unmanaged[Cdecl]<nuint, void*> alloc,
+        out delegate* unmanaged[Cdecl]<void*, nuint, nuint, void*> realloc,
+        out delegate* unmanaged[Cdecl]<void*, nuint, void> free);
 }

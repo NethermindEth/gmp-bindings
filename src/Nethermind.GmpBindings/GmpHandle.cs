@@ -17,12 +17,12 @@ public class GmpHandle(nint handle) : SafeHandle(handle, true)
     public override bool IsInvalid => handle == nint.Zero;
 
     /// <inheritdoc/>
-    protected override bool ReleaseHandle()
+    protected override unsafe bool ReleaseHandle()
     {
         if (IsInvalid)
             return false;
 
-        Gmp.free(handle, nuint.Zero);
+        Gmp.free((void*)handle, nuint.Zero);
 
         return true;
     }

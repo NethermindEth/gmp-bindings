@@ -39,6 +39,6 @@ public static partial class Gmp
     /// <summary>
     /// <see href="https://gmplib.org/manual/Converting-Integers#index-mpz_005fget_005fstr">See the GMP manual</see>
     /// </summary>
-    [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_str")]
-    public static partial nint mpz_get_str(nint str, int @base, in mpz_t op);
+    [LibraryImport(LibraryName, EntryPoint = "__gmpz_get_str", StringMarshalling = StringMarshalling.Utf8)]
+    public static partial string mpz_get_str(string? str, int @base, in mpz_t op);
 }

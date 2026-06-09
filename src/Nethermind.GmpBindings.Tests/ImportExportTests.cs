@@ -22,7 +22,7 @@ public class ImportExportTests
             Span<byte> data = stackalloc byte[value.Length / 2];
 
             fixed (byte* ptr = &MemoryMarshal.GetReference(data))
-                Gmp.mpz_export((nint)ptr, out count, 1, 1, 1, nuint.Zero, x);
+                Gmp.mpz_export(ptr, out count, 1, 1, 1, nuint.Zero, x);
 
             dataHex = Convert.ToHexStringLower(data);
         }
@@ -44,11 +44,9 @@ public class ImportExportTests
             using var x = mpz_t.Create();
 
             fixed (byte* ptr = &MemoryMarshal.GetReference(import))
-                Gmp.mpz_import(x, (nuint)import.Length, 1, 1, 1, nuint.Zero, (nint)ptr);
+                Gmp.mpz_import(x, (nuint)import.Length, 1, 1, 1, nuint.Zero, ptr);
 
-            using GmpHandle str = new(Gmp.mpz_get_str(nint.Zero, 16, x));
-
-            actualValue = Marshal.PtrToStringUTF8(str.DangerousGetHandle());
+            actualValue = Gmp.mpz_get_str(null, 16, x);
         }
 
         await Assert.That(actualValue?.PadLeft(value.Length, '0')).IsEqualTo(value);

@@ -5,7 +5,6 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Nethermind.GmpBindings;
 
@@ -20,8 +19,6 @@ public readonly ref struct mpz_t
     internal readonly int _mp_alloc;
     internal readonly int _mp_size;
     internal readonly nint _mp_d;
-
-    #region Initialization
 
     /// <summary>
     /// Initializes a new instance of the <see cref="mpz_t"/> struct
@@ -107,27 +104,18 @@ public readonly ref struct mpz_t
     {
         ArgumentException.ThrowIfNullOrEmpty(value);
 
-        fixed (byte* str = &MemoryMarshal.GetArrayDataReference(Encoding.UTF8.GetBytes(value)))
-        {
-            Unsafe.SkipInit(out mpz_t x);
+        Unsafe.SkipInit(out mpz_t x);
 
-            if (Gmp.mpz_init_set_str(x, (nint)str, @base) == 0)
-                return x;
+        if (Gmp.mpz_init_set_str(x, value, @base) == 0)
+            return x;
 
-            Gmp.mpz_clear(x);
+        Gmp.mpz_clear(x);
 
-            throw new ArgumentException("Value is an incorrect base.", nameof(value));
-        }
+        throw new ArgumentException("Value is an incorrect base.", nameof(value));
     }
-
-    #endregion
-
-    #region Cleanup
 
     /// <summary>
     /// Frees the memory occupied by this instance using the <see cref="Gmp.mpz_clear"/> method.
     /// </summary>
     public readonly void Dispose() => Gmp.mpz_clear(this);
-
-    #endregion
 }

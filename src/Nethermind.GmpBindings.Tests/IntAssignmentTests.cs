@@ -1,9 +1,6 @@
 // SPDX-FileCopyrightText: 2025 Demerzel Solutions Limited
 // SPDX-License-Identifier: MIT
 
-using System.Runtime.InteropServices;
-using System.Text;
-
 namespace Nethermind.GmpBindings.Tests;
 
 public class IntAssignmentTests
@@ -81,14 +78,11 @@ public class IntAssignmentTests
         int status;
         int result;
 
-        unsafe
         {
             var value = "0x1000";
             using mpz_t x = default;
 
-            fixed (byte* str = &MemoryMarshal.GetArrayDataReference(Encoding.UTF8.GetBytes(value)))
-                status = Gmp.mpz_set_str(x, (nint)str, 0);
-
+            status = Gmp.mpz_set_str(x, value, 0);
             result = Gmp.mpz_cmp_si(x, Convert.ToInt32(value, 16));
         }
 
