@@ -5,11 +5,14 @@
 
 C# bindings for the [GNU Multiple Precision](https://gmplib.org) (GMP) arithmetic library.
 
-#### Note
+## Notes
 
-- Not all GMP functions are currently bound — only a subset of integer functions. If you need a specific function, please open an issue.
-- To build the GMP, an unofficial GMP repository mirror is used, as the official repository is inaccessible from GitHub.
+Not all GMP functions are currently bound, only a subset of integer functions. If you need a specific function, please open an issue.
+
+The binaries are built from an unofficial GMP repository mirror, as the official repository is inaccessible from GitHub.
 
 ## License
 
-This project is licensed under the [MIT](./LICENSE) license and contains dynamically linked GMP binaries licensed under the [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html) and [GPL-2.0](https://www.gnu.org/licenses/gpl-2.0.html) dual licenses.
+This project is licensed under the [MIT](https://github.com/nethermindeth/gmp-bindings/blob/main/LICENSE) license.
+
+The package also ships prebuilt GMP binaries, used under the [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html) option of GMP's dual LGPL-3.0/[GPL-2.0](https://www.gnu.org/licenses/gpl-2.0.html) license. Those binaries are linked dynamically and link no dependencies of their own. See [THIRD-PARTY-NOTICES](https://github.com/nethermindeth/gmp-bindings/blob/main/THIRD-PARTY-NOTICES) for the third-party license texts.
