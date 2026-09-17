@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
     steps:
       - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: gmp-mirror/gmp-6.3
 
@@ -39,7 +39,7 @@ jobs:
           strip .libs/libgmp.so
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-${{ matrix.arch }}
           path: .libs/libgmp.so
@@ -51,14 +51,14 @@ jobs:
     strategy:
       matrix:
         arch: [arm64, x64]
-    runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-latest-large' }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-26-intel' }}
     steps:
       - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: gmp-mirror/gmp-6.3
 
-      - name: Install build tools 
+      - name: Install build tools
         run: |
           brew install automake texinfo \
             ${{ matrix.arch == 'arm64' && 'autoconf libtool' || '' }}
@@ -74,7 +74,7 @@ jobs:
           strip -x .libs/libgmp.dylib
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: osx-${{ matrix.arch }}
           path: .libs/libgmp.dylib
@@ -92,7 +92,7 @@ jobs:
         run: git config --global core.autocrlf input
 
       - name: Check out gmp-6.3 repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: gmp-mirror/gmp-6.3
 
@@ -120,7 +120,7 @@ jobs:
           strip -o .libs/gmp.dll .libs/libgmp-10.dll
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: win-${{ matrix.arch }}
           path: .libs/gmp.dll
@@ -134,10 +134,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: src/Nethermind.GmpBindings/runtimes
 
@@ -150,7 +150,7 @@ jobs:
           mv -f osx-x64/libgmp.dylib osx-x64/native/libgmp.dylib
           mv -f win-arm64/gmp.dll win-arm64/native/gmp.dll
           mv -f win-x64/gmp.dll win-x64/native/gmp.dll
-          
+
       - name: Create a pull request
         env:
           GH_TOKEN: ${{ github.token }}
