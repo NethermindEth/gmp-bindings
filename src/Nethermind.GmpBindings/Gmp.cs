@@ -7,7 +7,7 @@ using System.Runtime.Loader;
 
 namespace Nethermind.GmpBindings;
 
-public static unsafe partial class Gmp
+public static partial class Gmp
 {
     private const string LibraryName = "gmp";
 
@@ -21,7 +21,11 @@ public static unsafe partial class Gmp
             Marshal.ReadIntPtr(NativeLibrary.GetExport(handle, "__gmp_version"))
             ) ?? string.Empty;
 
-        mp_get_memory_functions(out _alloc, out _realloc, out _free);
+        // SAFETY: GMP owns the returned function pointers for the process lifetime.
+        unsafe
+        {
+            mp_get_memory_functions(out _alloc, out _realloc, out _free);
+        }
 
         NativeLibrary.Free(handle);
     }

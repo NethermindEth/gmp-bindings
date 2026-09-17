@@ -100,7 +100,7 @@ public readonly ref struct mpz_t
     /// <exception cref="ArgumentException">
     /// <c>value</c> is an empty string or an incorrect base <c>base</c>.
     /// </exception>
-    public static unsafe mpz_t Create(string value, int @base = 0)
+    public static mpz_t Create(string value, int @base = 0)
     {
         ArgumentException.ThrowIfNullOrEmpty(value);
 

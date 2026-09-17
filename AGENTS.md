@@ -16,6 +16,7 @@ C# bindings for the GNU Multiple Precision (GMP) arithmetic library. See [global
 - Add tests for new code and bug fixes.
 - Use conventional commits; keep scoped and imperative.
 - Keep the bindings faithful to the GMP C API: preserve the native names and signatures, and document each one with a link to the GMP manual.
+- Keep `unsafe` on the narrowest scope: on the members that need it or in inner `unsafe { }` blocks, never on a type declaration, and note the caller obligations with a short `// SAFETY:` comment. See [Improving C# memory safety](https://devblogs.microsoft.com/dotnet/improving-csharp-memory-safety/).
 - Do not build or edit the native binaries under `runtimes/` locally; they are tracked with Git LFS and produced by [build-gmp.yml](./.github/workflows/build-gmp.yml).
 - Prefer the latest versions of GitHub Actions and runners.
 - Update [THIRD-PARTY-NOTICES](./THIRD-PARTY-NOTICES) when introducing a dependency if needed.
