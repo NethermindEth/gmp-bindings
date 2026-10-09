@@ -64,6 +64,8 @@ jobs:
             ${{ matrix.arch == 'arm64' && 'autoconf libtool' || '' }}
 
       - name: Build
+        env:
+          MACOSX_DEPLOYMENT_TARGET: '15.0'
         run: |
           ./.bootstrap
           ./configure \
