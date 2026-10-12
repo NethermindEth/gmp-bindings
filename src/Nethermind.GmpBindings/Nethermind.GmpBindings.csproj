@@ -11,7 +11,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <PackageId>Nethermind.GmpBindings</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://nethermind.io</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/nethermindeth/gmp-bindings</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>gmp</PackageTags>
     <RepositoryType>git</RepositoryType>
