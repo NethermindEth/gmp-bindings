@@ -28,6 +28,8 @@ jobs:
         with:
           repository: gmp-mirror/gmp-6.3
 
+      # -Bsymbolic binds the library's references to its own exported symbols at link time, so another libgmp in the
+      # global symbol scope cannot replace them. The tests run before it, as they copy-relocate GMP's global variables.
       - name: Build
         run: |
           ./.bootstrap
@@ -36,7 +38,19 @@ jobs:
             --disable-static
           make -j$(nproc)
           make check
+          rm libgmp.la
+          make libgmp.la LDFLAGS=-Wl,-Bsymbolic
           strip .libs/libgmp.so
+
+      - name: Verify symbol binding
+        run: |
+          so=.libs/libgmp.so
+          nm -D --defined-only $so | awk '{ sub(/@.*/, "", $NF); print $NF }' | sort -u > $RUNNER_TEMP/defined
+          objdump -R $so | awk '$1 ~ /^[0-9a-f]+$/ { sub(/[@+].*/, "", $3); print $3 }' | sort -u > $RUNNER_TEMP/relocated
+          if comm -12 $RUNNER_TEMP/defined $RUNNER_TEMP/relocated | grep .; then
+            echo "::error::Symbols above are bound at run time and can be replaced by another libgmp"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
