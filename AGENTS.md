@@ -19,6 +19,7 @@ C# bindings for the GNU Multiple Precision (GMP) arithmetic library. See [global
 - Keep `unsafe` on the narrowest scope: on the members that need it or in inner `unsafe { }` blocks, never on a type declaration, and note the caller obligations with a short `// SAFETY:` comment. See [Improving C# memory safety](https://devblogs.microsoft.com/dotnet/improving-csharp-memory-safety/).
 - Do not build or edit the native binaries under `runtimes/` locally; they are tracked with Git LFS and produced by [build-gmp.yml](./.github/workflows/build-gmp.yml).
 - Link the Linux library with `-Wl,-Bsymbolic` so another libgmp in the process cannot replace its own symbols; [build-gmp.yml](./.github/workflows/build-gmp.yml) relinks it after `make check` and fails if any remain bound at run time.
+- Link the macOS x64 library with `-Wl,-ld_classic`: Xcode's default linker mislinks GMP's x86_64 assembly, and `make check` hangs.
 - Prefer the latest versions of GitHub Actions and runners.
 - Update [THIRD-PARTY-NOTICES](./THIRD-PARTY-NOTICES) when introducing a dependency if needed.
 - Keep [AGENTS.md](./AGENTS.md) in sync with the ongoing development.
