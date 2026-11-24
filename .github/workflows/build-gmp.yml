@@ -22,12 +22,15 @@ jobs:
       matrix:
         arch: [arm64, x64]
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
+    timeout-minutes: 60
     steps:
       - name: Check out gmp-6.3 repository
         uses: actions/checkout@v7
         with:
           repository: gmp-mirror/gmp-6.3
 
+      # -Bsymbolic binds the library's references to its own exported symbols at link time, so another libgmp in the
+      # global symbol scope cannot replace them. The tests run before it, as they copy-relocate GMP's global variables.
       - name: Build
         run: |
           ./.bootstrap
@@ -36,7 +39,19 @@ jobs:
             --disable-static
           make -j$(nproc)
           make check
+          rm libgmp.la
+          make libgmp.la LDFLAGS=-Wl,-Bsymbolic
           strip .libs/libgmp.so
+
+      - name: Verify symbol binding
+        run: |
+          so=.libs/libgmp.so
+          nm -D --defined-only $so | awk '{ sub(/@.*/, "", $NF); print $NF }' | sort -u > $RUNNER_TEMP/defined
+          objdump -R $so | awk '$1 ~ /^[0-9a-f]+$/ { sub(/[@+].*/, "", $3); print $3 }' | sort -u > $RUNNER_TEMP/relocated
+          if comm -12 $RUNNER_TEMP/defined $RUNNER_TEMP/relocated | grep .; then
+            echo "::error::Symbols above are bound at run time and can be replaced by another libgmp"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
@@ -52,6 +67,7 @@ jobs:
       matrix:
         arch: [arm64, x64]
     runs-on: ${{ matrix.arch == 'arm64' && 'macos-latest' || 'macos-26-intel' }}
+    timeout-minutes: 60
     steps:
       - name: Check out gmp-6.3 repository
         uses: actions/checkout@v7
@@ -63,6 +79,8 @@ jobs:
           brew install automake texinfo \
             ${{ matrix.arch == 'arm64' && 'autoconf libtool' || '' }}
 
+      # Xcode's default linker mislinks GMP's x86_64 assembly: mpn_preinv_mu_div_qr gets a garbage carry and
+      # make check hangs in tests/mpn/t-div. -ld_classic selects the previous linker.
       - name: Build
         env:
           MACOSX_DEPLOYMENT_TARGET: '15.0'
@@ -70,7 +88,8 @@ jobs:
           ./.bootstrap
           ./configure \
             --host=${{ matrix.arch == 'arm64' && 'aarch64-apple-darwin' || 'x86_64-apple-darwin' }} \
-            --disable-static
+            --disable-static \
+            ${{ matrix.arch == 'x64' && 'LDFLAGS=-Wl,-ld_classic' || '' }}
           make -j$(sysctl -n hw.ncpu)
           make check
           strip -x .libs/libgmp.dylib
@@ -89,6 +108,7 @@ jobs:
       matrix:
         arch: [arm64, x64]
     runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
+    timeout-minutes: 60
     steps:
       - name: Disable line ending conversion
         run: git config --global core.autocrlf input
@@ -104,7 +124,7 @@ jobs:
           update: true
           msystem: ${{ matrix.arch == 'arm64' && 'clangarm64' || 'clang64' }}
           install: >-
-            autoconf automake base-devel git libtool
+            autoconf automake base-devel bison flex git libtool texinfo
             ${{ matrix.arch == 'arm64' && 'mingw-w64-clang-aarch64-toolchain' || 'mingw-w64-clang-x86_64-toolchain' }}
 
       - name: Build
